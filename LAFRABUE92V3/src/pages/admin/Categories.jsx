@@ -72,7 +72,7 @@ const AdminCategories = () => {
       </div>
 
       {/* Categories Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {categories.map((category) => (
           <motion.div
             key={category.id}
@@ -81,24 +81,24 @@ const AdminCategories = () => {
             className="neon-border rounded-2xl p-6 bg-slate-900/50 backdrop-blur-sm"
           >
             {category.icon && category.icon.startsWith('http') ? (
-              <div className="w-full h-32 mb-4 rounded-lg overflow-hidden bg-slate-800">
+              <div className="w-full h-24 sm:h-32 mb-3 sm:mb-4 rounded-lg overflow-hidden bg-slate-800">
                 <img src={category.icon} alt={category.name} className="w-full h-full object-cover" />
               </div>
             ) : (
-              <div className="text-5xl mb-4 text-center">{category.icon}</div>
+              <div className="text-3xl sm:text-4xl md:text-5xl mb-3 sm:mb-4 text-center">{category.icon}</div>
             )}
-            <h3 className="text-xl font-bold text-white mb-2">{category.name}</h3>
-            <p className="text-gray-400 text-sm mb-4">{category.description}</p>
-            <div className="flex gap-2">
+            <h3 className="text-lg sm:text-xl font-bold text-white mb-2 line-clamp-2">{category.name}</h3>
+            <p className="text-gray-400 text-xs sm:text-sm mb-3 sm:mb-4 line-clamp-2">{category.description}</p>
+            <div className="flex gap-1 sm:gap-2">
               <button
                 onClick={() => handleEdit(category)}
-                className="flex-1 px-3 py-2 bg-gray-700/20 border border-gray-600/50 rounded-lg text-gray-300 hover:bg-gray-600/30 transition-colors text-sm"
+                className="flex-1 px-2 py-1.5 sm:px-3 sm:py-2 bg-gray-700/20 border border-gray-600/50 rounded-lg text-gray-300 hover:bg-gray-600/30 transition-colors text-xs sm:text-sm"
               >
                 ✏️ Modifier
               </button>
               <button
                 onClick={() => handleDelete(category.id)}
-                className="flex-1 px-3 py-2 bg-gray-800/20 border border-gray-600/50 rounded-lg text-gray-400 hover:bg-gray-700/30 transition-colors text-sm"
+                className="flex-1 px-2 py-1.5 sm:px-3 sm:py-2 bg-gray-800/20 border border-gray-600/50 rounded-lg text-gray-400 hover:bg-gray-700/30 transition-colors text-xs sm:text-sm"
               >
                 🗑️ Supprimer
               </button>

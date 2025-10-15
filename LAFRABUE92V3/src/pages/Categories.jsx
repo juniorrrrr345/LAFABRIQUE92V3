@@ -80,7 +80,7 @@ const Categories = () => {
               <p className="text-theme-secondary text-xl">Aucune catégorie disponible pour le moment</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
               {categories.map((category, index) => (
                 <CategoryCard 
                   key={category.id} 
@@ -111,7 +111,7 @@ const CategoryCard = ({ category, index, count, gradient }) => {
     >
       <Link to={`/products?category=${category.id}`} className="block">
         {/* Icon/Image Section */}
-        <div className={`relative h-48 flex items-center justify-center ${category.icon && category.icon.startsWith('http') ? 'bg-slate-800' : `bg-gradient-to-br ${gradient}`} overflow-hidden`}>
+        <div className={`relative h-32 sm:h-40 md:h-48 flex items-center justify-center ${category.icon && category.icon.startsWith('http') ? 'bg-slate-800' : `bg-gradient-to-br ${gradient}`} overflow-hidden`}>
           {category.icon && category.icon.startsWith('http') ? (
             <img 
               src={category.icon} 
@@ -121,30 +121,30 @@ const CategoryCard = ({ category, index, count, gradient }) => {
           ) : (
             <motion.div
               whileHover={{ scale: 1.2, rotate: 10 }}
-              className="text-8xl filter drop-shadow-2xl"
+              className="text-4xl sm:text-6xl md:text-8xl filter drop-shadow-2xl"
             >
               {category.icon}
             </motion.div>
           )}
           
           {/* Count Badge */}
-          <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm rounded-full px-3 py-1">
-            <span className="text-theme-heading font-bold">{count} produit{count !== 1 ? 's' : ''}</span>
+          <div className="absolute top-2 right-2 sm:top-4 sm:right-4 bg-black/50 backdrop-blur-sm rounded-full px-2 py-1 sm:px-3">
+            <span className="text-theme-heading font-bold text-xs sm:text-sm">{count} produit{count !== 1 ? 's' : ''}</span>
           </div>
         </div>
 
         {/* Info Section */}
-        <div className="p-6">
-          <h3 className="text-2xl font-bold text-theme-heading mb-2 group-hover:text-gradient transition-all">
+        <div className="p-3 sm:p-4 md:p-6">
+          <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-theme-heading mb-2 group-hover:text-gradient transition-all line-clamp-2">
             {category.name}
           </h3>
-          <p className="text-theme-secondary group-hover:text-theme transition-colors">
+          <p className="text-theme-secondary group-hover:text-theme transition-colors text-sm sm:text-base line-clamp-2">
             {category.description}
           </p>
           
-          <div className="mt-4 flex items-center text-theme-heading font-semibold group-hover:translate-x-2 transition-transform">
+          <div className="mt-3 sm:mt-4 flex items-center text-theme-heading font-semibold group-hover:translate-x-2 transition-transform text-sm sm:text-base">
             <span>Voir les produits</span>
-            <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 sm:w-5 sm:h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
           </div>

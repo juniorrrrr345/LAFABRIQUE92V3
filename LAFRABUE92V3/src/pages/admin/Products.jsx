@@ -179,16 +179,16 @@ const AdminProducts = () => {
       {/* Products Grid - Mobile | Table - Desktop */}
       <div className="neon-border rounded-2xl overflow-hidden bg-slate-900/50 backdrop-blur-sm">
         {/* Mobile Grid View */}
-        <div className="lg:hidden grid grid-cols-1 sm:grid-cols-2 gap-4 p-4">
+        <div className="lg:hidden grid grid-cols-2 gap-3 sm:gap-4 p-3 sm:p-4">
           {products.map((product) => (
             <motion.div
               key={product.id}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="bg-slate-800/30 rounded-xl p-4 space-y-3"
+              className="bg-slate-800/30 rounded-xl p-2 sm:p-3 space-y-2 sm:space-y-3"
             >
-              <div className="flex items-start gap-3">
-                <div className="w-20 h-20 rounded-lg overflow-hidden bg-slate-800 flex-shrink-0">
+              <div className="flex items-start gap-2 sm:gap-3">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden bg-slate-800 flex-shrink-0">
                   {(product.photo || product.video || product.image) ? (
                     isCloudflareStreamIframe(product.video || product.photo || product.image) ? (
                       <div className="w-full h-full flex items-center justify-center text-2xl bg-slate-900">
@@ -214,23 +214,23 @@ const AdminProducts = () => {
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-white font-medium truncate">{product.name}</h3>
-                  <p className="text-gray-400 text-sm line-clamp-2">{product.description}</p>
-                  <p className="text-white font-semibold mt-1">{getDisplayPrice(product)}</p>
+                  <h3 className="text-white font-medium text-sm sm:text-base truncate">{product.name}</h3>
+                  <p className="text-gray-400 text-xs sm:text-sm line-clamp-2">{product.description}</p>
+                  <p className="text-white font-semibold mt-1 text-sm sm:text-base">{getDisplayPrice(product)}</p>
                   <p className="text-gray-400 text-xs">{getCategoryName(product.category)}</p>
                   {product.farm && <p className="text-gray-500 text-xs">🌾 {getFarmName(product.farm)}</p>}
                 </div>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-1 sm:gap-2">
                 <button
                   onClick={() => handleEdit(product)}
-                  className="flex-1 px-3 py-2 bg-gray-700/20 border border-gray-600/50 rounded-lg text-gray-300 hover:bg-gray-600/30 transition-colors text-sm"
+                  className="flex-1 px-2 py-1.5 sm:px-3 sm:py-2 bg-gray-700/20 border border-gray-600/50 rounded-lg text-gray-300 hover:bg-gray-600/30 transition-colors text-xs sm:text-sm"
                 >
                   ✏️ Modifier
                 </button>
                 <button
                   onClick={() => handleDelete(product.id)}
-                  className="flex-1 px-3 py-2 bg-gray-800/20 border border-gray-600/50 rounded-lg text-gray-400 hover:bg-gray-700/30 transition-colors text-sm"
+                  className="flex-1 px-2 py-1.5 sm:px-3 sm:py-2 bg-gray-800/20 border border-gray-600/50 rounded-lg text-gray-400 hover:bg-gray-700/30 transition-colors text-xs sm:text-sm"
                 >
                   🗑️ Supprimer
                 </button>
