@@ -188,41 +188,6 @@ const FarmModal = ({ farm, onClose, onSuccess }) => {
             />
           </div>
 
-          <div>
-            <label className="block text-gray-300 mb-2">Description</label>
-            <textarea
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              rows="3"
-              placeholder="Description de la farm..."
-              className="w-full px-4 py-3 bg-black border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gray-500 transition-colors resize-none"
-            ></textarea>
-          </div>
-
-          <div>
-            <label className="block text-gray-300 mb-2">Image</label>
-            {formData.image && formData.image.startsWith('http') ? (
-              <div className="mb-3 relative group">
-                <img src={formData.image} alt="Aperçu" className="w-full h-40 object-cover rounded" />
-                <button
-                  type="button"
-                  onClick={() => setFormData({ ...formData, image: '' })}
-                  className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                >
-                  ×
-                </button>
-              </div>
-            ) : null}
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => handleImageUpload(e.target.files[0])}
-              disabled={uploadingImage}
-              className="w-full px-4 py-2 bg-black border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-gray-500 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:bg-gray-700 file:text-white file:text-xs file:cursor-pointer"
-            />
-            {uploadingImage && <p className="text-gray-400 text-sm mt-2">Upload en cours...</p>}
-          </div>
-
           <div className="flex gap-3">
             <button
               type="submit"
