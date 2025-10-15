@@ -1,7 +1,6 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { useLoading } from '../contexts/LoadingContext'
-import { AdvancedLoadingAnimation, FloatingParticles } from './LoadingAnimations'
 
 const LoadingPage = () => {
   const { loadingMessage, loadingProgress } = useLoading()
@@ -9,12 +8,80 @@ const LoadingPage = () => {
   return (
     <div className="fixed inset-0 bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center z-50 overflow-hidden">
       {/* Particules flottantes en arrière-plan */}
-      <FloatingParticles count={25} size="medium" />
+      <div className="absolute inset-0">
+        {[...Array(25)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-2 h-2 bg-white/20 rounded-full"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              y: [0, -30, 0],
+              opacity: [0.2, 0.8, 0.2],
+              scale: [1, 1.2, 1],
+            }}
+            transition={{
+              duration: 3 + Math.random() * 2,
+              repeat: Infinity,
+              delay: Math.random() * 2,
+            }}
+          />
+        ))}
+      </div>
 
       <div className="text-center relative z-10">
-        {/* Animation de chargement avancée */}
+        {/* Logo/Icon de chargement sophistiqué */}
         <div className="mb-12">
-          <AdvancedLoadingAnimation type="spiral" size="large" />
+          <div className="w-32 h-32 mx-auto relative">
+            {/* Cercle externe avec gradient animé */}
+            <motion.div 
+              className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 opacity-30"
+              animate={{ rotate: 360 }}
+              transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+            />
+            
+            {/* Cercle de chargement principal */}
+            <motion.div 
+              className="absolute inset-2 border-4 border-transparent border-t-white rounded-full"
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+            />
+            
+            {/* Cercle secondaire avec direction inverse */}
+            <motion.div 
+              className="absolute inset-4 border-3 border-transparent border-b-pink-300 rounded-full"
+              animate={{ rotate: -360 }}
+              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+            />
+            
+            {/* Cercle intérieur avec pulsation */}
+            <motion.div 
+              className="absolute inset-6 border-2 border-transparent border-r-blue-300 rounded-full"
+              animate={{ 
+                scale: [1, 1.2, 1],
+                opacity: [0.5, 1, 0.5]
+              }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            />
+            
+            {/* Point central animé */}
+            <motion.div
+              className="absolute inset-0 flex items-center justify-center"
+              animate={{
+                scale: [1, 1.3, 1],
+                opacity: [0.7, 1, 0.7]
+              }}
+              transition={{
+                duration: 1.5,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            >
+              <div className="w-4 h-4 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full shadow-lg shadow-purple-500/50" />
+            </motion.div>
+          </div>
         </div>
 
         {/* Texte de chargement avec animation sophistiquée */}

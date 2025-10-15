@@ -1,6 +1,5 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-import { AdvancedLoadingAnimation, FloatingParticles, AnimatedBars } from './LoadingAnimations'
 
 const ProductLoading = ({ message = "Chargement des produits...", progress = 0 }) => {
   return (
