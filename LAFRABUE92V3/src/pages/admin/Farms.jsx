@@ -126,25 +126,9 @@ const AdminFarms = () => {
 
 const FarmModal = ({ farm, onClose, onSuccess }) => {
   const [formData, setFormData] = useState({
-    name: farm?.name || '',
-    description: farm?.description || '',
-    image: farm?.image || ''
+    name: farm?.name || ''
   })
   const [loading, setLoading] = useState(false)
-  const [uploadingImage, setUploadingImage] = useState(false)
-
-  const handleImageUpload = async (file) => {
-    setUploadingImage(true)
-    try {
-      const result = await uploadToR2(file)
-      setFormData({ ...formData, image: result.url })
-    } catch (error) {
-      console.error('Error uploading image:', error)
-      alert('Erreur lors de l\'upload de l\'image')
-    } finally {
-      setUploadingImage(false)
-    }
-  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
