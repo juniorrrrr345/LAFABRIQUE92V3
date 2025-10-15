@@ -17,12 +17,10 @@ const AdminOrderSettings = () => {
   const loadSettings = async () => {
     try {
       const data = await getAll('settings')
-      if (data.orderLink || data.orderButtonText) {
-        setSettings({
-          orderLink: data.orderLink || '',
-          orderButtonText: data.orderButtonText || 'Commander'
-        })
-      }
+      setSettings({
+        orderLink: data.orderLink || '',
+        orderButtonText: data.orderButtonText || 'Commander'
+      })
     } catch (error) {
       console.error('Error loading settings:', error)
     } finally {
@@ -35,8 +33,11 @@ const AdminOrderSettings = () => {
     setSaving(true)
 
     try {
-      // Sauvegarder directement via l'API
-      const response = await fetch('https://thegd33.calitek-junior.workers.dev/api/settings', {
+      // Récupérer l'URL de l'API depuis les variables d'environnement
+      const API_URL = import.meta.env.VITE_API_URL || 'https://calitekv3.calitek-junior.workers.dev'
+      
+      // Sauvegarder les paramètres via l'API (envoyer un objet avec les clés)
+      const response = await fetch(`${API_URL}/api/settings`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

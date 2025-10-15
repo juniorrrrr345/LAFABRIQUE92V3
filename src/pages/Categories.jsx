@@ -21,7 +21,8 @@ const Categories = () => {
         const products = await getAll('products')
         const counts = {}
         products.forEach(product => {
-          const cat = product.category
+          // Convertir en string pour assurer la correspondance
+          const cat = String(product.category)
           counts[cat] = (counts[cat] || 0) + 1
         })
         setProductCounts(counts)
@@ -86,7 +87,7 @@ const Categories = () => {
                   key={category.id} 
                   category={category} 
                   index={index}
-                  count={productCounts[category.id] || 0}
+                  count={productCounts[String(category.id)] || 0}
                   gradient={gradients[index % gradients.length]}
                 />
               ))}
@@ -101,6 +102,9 @@ const Categories = () => {
 }
 
 const CategoryCard = ({ category, index, count, gradient }) => {
+  // S'assurer que le count utilise la même clé (convertie en string)
+  const productCount = count || 0
+  
   return (
     <motion.div
       initial={{ opacity: 0, y: 50 }}
@@ -129,7 +133,7 @@ const CategoryCard = ({ category, index, count, gradient }) => {
           
           {/* Count Badge */}
           <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm rounded-full px-3 py-1">
-            <span className="text-theme-heading font-bold">{count} produit{count !== 1 ? 's' : ''}</span>
+            <span className="text-white font-bold">{productCount} produit{productCount !== 1 ? 's' : ''}</span>
           </div>
         </div>
 
