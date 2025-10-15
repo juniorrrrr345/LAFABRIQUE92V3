@@ -20,9 +20,11 @@ const AdminOrderSettings = () => {
       // Chercher l'entrée orderSettings
       const orderData = data.find(s => s.key === 'orderSettings')
       if (orderData) {
+        // Si orderData.value existe, c'est un objet JSON parsé
+        const orderSettings = orderData.value || orderData
         setSettings({
-          orderLink: orderData.orderLink || '',
-          orderButtonText: orderData.orderButtonText || 'Commander'
+          orderLink: orderSettings.orderLink || '',
+          orderButtonText: orderSettings.orderButtonText || 'Commander'
         })
       }
     } catch (error) {

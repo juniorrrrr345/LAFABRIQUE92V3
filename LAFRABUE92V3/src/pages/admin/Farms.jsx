@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { getAll, save, remove } from '../../utils/api'
+import { uploadToR2 } from '../../utils/cloudflare'
 
 const AdminFarms = () => {
   const [farms, setFarms] = useState([])
@@ -71,26 +72,33 @@ const AdminFarms = () => {
       </div>
 
       {/* Farms Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
         {farms.map((farm) => (
           <motion.div
             key={farm.id}
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="border border-gray-700 rounded-xl p-4 bg-black/50 hover:bg-black/70 transition-colors"
+            className="neon-border rounded-2xl p-6 bg-slate-900/50 backdrop-blur-sm"
           >
-            <h3 className="text-lg font-bold text-white mb-3">🌾 {farm.name}</h3>
-            
+            {farm.image && farm.image.startsWith('http') ? (
+              <div className="w-full h-32 mb-4 rounded-lg overflow-hidden bg-slate-800">
+                <img src={farm.image} alt={farm.name} className="w-full h-full object-cover" />
+              </div>
+            ) : (
+              <div className="text-5xl mb-4 text-center">🌾</div>
+            )}
+            <h3 className="text-xl font-bold text-white mb-2">{farm.name}</h3>
+            <p className="text-gray-400 text-sm mb-4">{farm.description}</p>
             <div className="flex gap-2">
               <button
                 onClick={() => handleEdit(farm)}
-                className="flex-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white hover:bg-gray-600 transition-colors text-sm"
+                className="flex-1 px-3 py-2 bg-gray-700/20 border border-gray-600/50 rounded-lg text-gray-300 hover:bg-gray-600/30 transition-colors text-sm"
               >
                 ✏️ Modifier
               </button>
               <button
                 onClick={() => handleDelete(farm.id)}
-                className="flex-1 px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-gray-400 hover:bg-gray-700 transition-colors text-sm"
+                className="flex-1 px-3 py-2 bg-gray-800/20 border border-gray-600/50 rounded-lg text-gray-400 hover:bg-gray-700/30 transition-colors text-sm"
               >
                 🗑️ Supprimer
               </button>
@@ -118,19 +126,42 @@ const AdminFarms = () => {
 
 const FarmModal = ({ farm, onClose, onSuccess }) => {
   const [formData, setFormData] = useState({
-    name: farm?.name || ''
+    name: farm?.name || '',
+    description: farm?.description || '',
+    image: farm?.image || ''
   })
   const [loading, setLoading] = useState(false)
+  const [uploadingImage, setUploadingImage] = useState(false)
+
+  const handleImageUpload = async (file) => {
+    setUploadingImage(true)
+    try {
+      const result = await uploadToR2(file)
+      setFormData({ ...formData, image: result.url })
+    } catch (error) {
+      console.error('Error uploading image:', error)
+      alert('Erreur lors de l\'upload de l\'image')
+    } finally {
+      setUploadingImage(false)
+    }
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
 
     try {
-      await save('farms', {
+      const farmData = {
         id: farm?.id || Date.now().toString(),
-        ...formData
-      })
+        ...formData,
+        updatedAt: new Date().toISOString()
+      }
+
+      if (!farm) {
+        farmData.createdAt = new Date().toISOString()
+      }
+
+      await save('farms', farmData)
       onSuccess()
     } catch (error) {
       console.error('Error saving farm:', error)
@@ -173,10 +204,45 @@ const FarmModal = ({ farm, onClose, onSuccess }) => {
             />
           </div>
 
+          <div>
+            <label className="block text-gray-300 mb-2">Description</label>
+            <textarea
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              rows="3"
+              placeholder="Description de la farm..."
+              className="w-full px-4 py-3 bg-black border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gray-500 transition-colors resize-none"
+            ></textarea>
+          </div>
+
+          <div>
+            <label className="block text-gray-300 mb-2">Image</label>
+            {formData.image && formData.image.startsWith('http') ? (
+              <div className="mb-3 relative group">
+                <img src={formData.image} alt="Aperçu" className="w-full h-40 object-cover rounded" />
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, image: '' })}
+                  className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  ×
+                </button>
+              </div>
+            ) : null}
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => handleImageUpload(e.target.files[0])}
+              disabled={uploadingImage}
+              className="w-full px-4 py-2 bg-black border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-gray-500 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:bg-gray-700 file:text-white file:text-xs file:cursor-pointer"
+            />
+            {uploadingImage && <p className="text-gray-400 text-sm mt-2">Upload en cours...</p>}
+          </div>
+
           <div className="flex gap-3">
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || uploadingImage}
               className="flex-1 py-3 bg-white text-black rounded-lg font-bold hover:bg-gray-200 transition-all disabled:opacity-50"
             >
               {loading ? 'Enregistrement...' : 'Enregistrer'}
