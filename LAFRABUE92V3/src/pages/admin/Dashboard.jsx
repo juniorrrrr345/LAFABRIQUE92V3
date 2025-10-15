@@ -1,6 +1,8 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
+import APIDiagnostic from '../../components/admin/APIDiagnostic'
+import ConnectionTest from '../../components/admin/ConnectionTest'
 
 const Dashboard = () => {
   return (
@@ -61,6 +63,12 @@ const Dashboard = () => {
             <p className="text-gray-400 text-sm">Paramètres généraux</p>
           </motion.div>
         </Link>
+      </div>
+
+      {/* Diagnostic API */}
+      <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <APIDiagnostic />
+        <ConnectionTest />
       </div>
     </div>
   )
