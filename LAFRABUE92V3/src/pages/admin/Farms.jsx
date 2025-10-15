@@ -145,10 +145,10 @@ const FarmModal = ({ farm, onClose, onSuccess }) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[9999] flex items-center justify-center overflow-y-auto p-4"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
       onClick={onClose}
     >
-      <div className="w-full max-w-sm mx-auto max-h-screen overflow-auto">
+      <div className="w-full max-w-sm mx-auto">
         <motion.div
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
