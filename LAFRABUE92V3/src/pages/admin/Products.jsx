@@ -482,12 +482,19 @@ const ProductModal = ({ product, onClose, onSuccess }) => {
         updatedAt: new Date().toISOString()
       }
 
-      await save('products', productData)
+      console.log('Sauvegarde du produit:', productData)
+      const result = await save('products', productData)
+      console.log('Résultat de la sauvegarde:', result)
+      
+      if (result && result.error) {
+        throw new Error(result.error)
+      }
+      
       setLoading(false)
       onSuccess()
     } catch (error) {
       console.error('Error saving product:', error)
-      alert('Erreur lors de la sauvegarde du produit')
+      alert(`Erreur lors de la sauvegarde du produit: ${error.message || 'Erreur inconnue'}`)
       setLoading(false)
     }
   }
@@ -497,7 +504,7 @@ const ProductModal = ({ product, onClose, onSuccess }) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4"
+      className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4 overflow-y-auto"
       onClick={onClose}
     >
       <motion.div

@@ -36,11 +36,18 @@ const SocialModal = ({ social, onClose, onSuccess }) => {
         socialData.createdAt = new Date().toISOString()
       }
 
-      await save('socials', socialData)
+      console.log('Sauvegarde du réseau social:', socialData)
+      const result = await save('socials', socialData)
+      console.log('Résultat de la sauvegarde:', result)
+      
+      if (result && result.error) {
+        throw new Error(result.error)
+      }
+      
       onSuccess()
     } catch (error) {
       console.error('Error saving social:', error)
-      alert('Erreur lors de la sauvegarde')
+      alert(`Erreur lors de la sauvegarde: ${error.message || 'Erreur inconnue'}`)
     } finally {
       setLoading(false)
     }
@@ -51,7 +58,7 @@ const SocialModal = ({ social, onClose, onSuccess }) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-start justify-center p-4 overflow-y-auto"
+      className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto"
       onClick={onClose}
     >
       <motion.div
