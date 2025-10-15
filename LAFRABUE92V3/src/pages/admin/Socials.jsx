@@ -54,7 +54,7 @@ const SocialModal = ({ social, onClose, onSuccess }) => {
       className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[9999] flex items-center justify-center overflow-y-auto p-4"
       onClick={onClose}
     >
-      <div className="w-full max-w-md mx-auto">
+      <div className="w-full max-w-md mx-auto max-h-screen overflow-auto">
         <motion.div
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
