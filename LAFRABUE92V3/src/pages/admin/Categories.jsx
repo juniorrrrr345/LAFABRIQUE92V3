@@ -54,17 +54,17 @@ const AdminCategories = () => {
   }
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-8">
+    <div className="w-full">
+      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-4xl font-bold text-gradient glow-effect mb-2">
+          <h1 className="text-3xl lg:text-4xl font-bold text-gradient glow-effect mb-2">
             Gestion des Catégories
           </h1>
           <p className="text-gray-400">{categories.length} catégorie(s) au total</p>
         </div>
         <button
           onClick={handleAdd}
-          className="px-6 py-3 bg-gradient-to-r from-white to-gray-200 rounded-lg text-white font-semibold hover:from-gray-200 hover:to-gray-400 transition-all flex items-center space-x-2"
+          className="w-full lg:w-auto px-6 py-3 bg-gradient-to-r from-white to-gray-200 rounded-lg text-black font-semibold hover:from-gray-200 hover:to-gray-400 transition-all flex items-center justify-center space-x-2"
         >
           <span>➕</span>
           <span>Ajouter une catégorie</span>
@@ -72,7 +72,7 @@ const AdminCategories = () => {
       </div>
 
       {/* Categories Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
         {categories.map((category) => (
           <motion.div
             key={category.id}
