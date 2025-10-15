@@ -81,21 +81,30 @@ const LoadingPage = () => {
 
       {/* Particules flottantes colorées */}
       <div className="absolute inset-0">
-        {particles.map((particle) => (
-          <div
-            key={particle.id}
-            className={`absolute rounded-full animate-pulse bg-${particle.color}-400/30`}
-            style={{
-              left: `${particle.x}%`,
-              top: `${particle.y}%`,
-              width: `${particle.size}px`,
-              height: `${particle.size}px`,
-              animationDuration: `${particle.speed}s`,
-              opacity: particle.opacity,
-              animationDelay: `${Math.random() * 2}s`
-            }}
-          />
-        ))}
+        {particles.map((particle) => {
+          const colorClasses = {
+            purple: 'bg-purple-400/30',
+            pink: 'bg-pink-400/30',
+            blue: 'bg-blue-400/30',
+            cyan: 'bg-cyan-400/30',
+            yellow: 'bg-yellow-400/30'
+          }
+          return (
+            <div
+              key={particle.id}
+              className={`absolute rounded-full animate-pulse ${colorClasses[particle.color] || 'bg-white/20'}`}
+              style={{
+                left: `${particle.x}%`,
+                top: `${particle.y}%`,
+                width: `${particle.size}px`,
+                height: `${particle.size}px`,
+                animationDuration: `${particle.speed}s`,
+                opacity: particle.opacity,
+                animationDelay: `${Math.random() * 2}s`
+              }}
+            />
+          )
+        })}
       </div>
 
       {/* Grille de fond animée */}
@@ -134,17 +143,20 @@ const LoadingPage = () => {
             
             {/* Particules orbitantes autour du logo */}
             <div className="absolute inset-0">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <div
-                  key={i}
-                  className={`absolute w-2 h-2 rounded-full animate-orbit bg-${['purple', 'pink', 'blue', 'cyan'][i % 4]}-400`}
-                  style={{
-                    animationDelay: `${i * 0.5}s`,
-                    animationDuration: '4s',
-                    transformOrigin: '80px 80px'
-                  }}
-                />
-              ))}
+              {Array.from({ length: 8 }).map((_, i) => {
+                const colors = ['bg-purple-400', 'bg-pink-400', 'bg-blue-400', 'bg-cyan-400']
+                return (
+                  <div
+                    key={i}
+                    className={`absolute w-2 h-2 rounded-full animate-orbit ${colors[i % 4]}`}
+                    style={{
+                      animationDelay: `${i * 0.5}s`,
+                      animationDuration: '4s',
+                      transformOrigin: '80px 80px'
+                    }}
+                  />
+                )
+              })}
             </div>
           </div>
         </div>
