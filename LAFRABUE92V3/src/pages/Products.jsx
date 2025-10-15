@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo, useCallback } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import Footer from '../components/Footer'
+import LoadingSpinner from '../components/LoadingSpinner'
+import OptimizedProductCard from '../components/OptimizedProductCard'
+import { useDebounce } from '../hooks/useDebounce'
 
 const Products = () => {
   const [searchParams] = useSearchParams()
@@ -15,6 +18,9 @@ const Products = () => {
   const [selectedFarm, setSelectedFarm] = useState('')
   const [showFilters, setShowFilters] = useState(false)
   const [previewProduct, setPreviewProduct] = useState(null)
+  
+  // Débouncer la recherche pour améliorer les performances
+  const debouncedSearchTerm = useDebounce(searchTerm, 300)
 
   useEffect(() => {
     fetchData()
@@ -35,14 +41,18 @@ const Products = () => {
 
   useEffect(() => {
     filterProducts()
-  }, [searchTerm, selectedCategory, selectedFarm, allProducts])
+  }, [debouncedSearchTerm, selectedCategory, selectedFarm, allProducts])
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const { getAll } = await import('../utils/api')
-      const productsData = await getAll('products')
-      const categoriesData = await getAll('categories')
-      const farmsData = await getAll('farms')
+      
+      // Charger les données en parallèle pour de meilleures performances
+      const [productsData, categoriesData, farmsData] = await Promise.all([
+        getAll('products'),
+        getAll('categories'),
+        getAll('farms')
+      ])
       
       setAllProducts(productsData)
       setProducts(productsData)
@@ -54,16 +64,16 @@ const Products = () => {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
-  const filterProducts = () => {
+  const filterProducts = useCallback(() => {
     let filtered = [...allProducts]
 
     // Filtre par recherche
-    if (searchTerm) {
+    if (debouncedSearchTerm) {
       filtered = filtered.filter(product =>
-        product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.description.toLowerCase().includes(searchTerm.toLowerCase())
+        product.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+        product.description.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
       )
     }
 
@@ -78,7 +88,7 @@ const Products = () => {
     }
 
     setProducts(filtered)
-  }
+  }, [allProducts, debouncedSearchTerm, selectedCategory, selectedFarm])
 
   const clearFilters = () => {
     setSearchTerm('')
@@ -89,10 +99,7 @@ const Products = () => {
   if (loading) {
     return (
       <div className="min-h-screen cosmic-bg flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-white mx-auto mb-4"></div>
-          <p className="text-theme text-lg">Chargement...</p>
-        </div>
+        <LoadingSpinner size="lg" text="Chargement des produits..." />
       </div>
     )
   }
@@ -210,7 +217,7 @@ const Products = () => {
           ) : (
             <div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6 lg:gap-8">
               {Array.isArray(products) && products.map((product, index) => (
-                <ProductCard 
+                <OptimizedProductCard 
                   key={product.id} 
                   product={product} 
                   index={index}
@@ -241,29 +248,44 @@ const Products = () => {
   )
 }
 
-const ProductCard = ({ product, index, onPreview, categories, farms }) => {
+const ProductCard = React.memo(({ product, index, onPreview, categories, farms }) => {
   // Trouver les noms de catégorie et farm (convertir en string pour la comparaison)
-  const categoryName = (Array.isArray(categories) && categories.find(c => String(c.id) === String(product.category))?.name) || product.category
-  const farmName = (Array.isArray(farms) && farms.find(f => String(f.id) === String(product.farm))?.name) || product.farm
+  const categoryName = useMemo(() => 
+    (Array.isArray(categories) && categories.find(c => String(c.id) === String(product.category))?.name) || product.category,
+    [categories, product.category]
+  )
+  const farmName = useMemo(() => 
+    (Array.isArray(farms) && farms.find(f => String(f.id) === String(product.farm))?.name) || product.farm,
+    [farms, product.farm]
+  )
   
   // Construire le tableau de médias - PHOTO EN PREMIER pour affichage carte
-  const allMedias = []
-  if (product.photo && product.photo.trim()) allMedias.push(product.photo)
-  if (product.image && product.image.trim()) allMedias.push(product.image)
-  if (product.video && product.video.trim()) allMedias.push(product.video)
-  
-  // Vérifier aussi dans medias si c'est un tableau
-  if (product.medias && Array.isArray(product.medias)) {
-    product.medias.forEach(media => {
-      if (media && media.trim() && !allMedias.includes(media)) {
-        allMedias.push(media)
-      }
-    })
-  }
+  const allMedias = useMemo(() => {
+    const medias = []
+    if (product.photo && product.photo.trim()) medias.push(product.photo)
+    if (product.image && product.image.trim()) medias.push(product.image)
+    if (product.video && product.video.trim()) medias.push(product.video)
+    
+    // Vérifier aussi dans medias si c'est un tableau
+    if (product.medias && Array.isArray(product.medias)) {
+      product.medias.forEach(media => {
+        if (media && media.trim() && !medias.includes(media)) {
+          medias.push(media)
+        }
+      })
+    }
+    return medias
+  }, [product.photo, product.image, product.video, product.medias])
   
   // Afficher le premier média disponible (photo en priorité)
-  const displayImage = allMedias[0] || product.photo || product.image || product.video
-  const basePrice = product.variants?.[0]?.price || product.price
+  const displayImage = useMemo(() => 
+    allMedias[0] || product.photo || product.image || product.video,
+    [allMedias, product.photo, product.image, product.video]
+  )
+  const basePrice = useMemo(() => 
+    product.variants?.[0]?.price || product.price,
+    [product.variants, product.price]
+  )
   
   // Fonction pour détecter si c'est une vidéo
   const isVideo = (url) => {
@@ -367,47 +389,62 @@ const ProductCard = ({ product, index, onPreview, categories, farms }) => {
       </div>
     </motion.div>
   )
-}
+})
 
-const ProductPreview = ({ product, onClose, categories, farms }) => {
+const ProductPreview = React.memo(({ product, onClose, categories, farms }) => {
   const [selectedVariant, setSelectedVariant] = useState(0)
   
   // Convertir prices en variants si nécessaire
-  let variants = product.variants || [];
-  
-  // Si pas de variants, essayer de convertir depuis prices
-  if (!Array.isArray(variants) || variants.length === 0) {
-    if (product.prices && typeof product.prices === 'object') {
-      variants = Object.entries(product.prices).map(([name, price]) => ({
-        name,
-        price: typeof price === 'number' ? `${price}€` : price.toString()
-      }));
-    } else if (product.price) {
-      variants = [{ name: 'Standard', price: product.price }];
+  const variants = useMemo(() => {
+    let variants = product.variants || [];
+    
+    // Si pas de variants, essayer de convertir depuis prices
+    if (!Array.isArray(variants) || variants.length === 0) {
+      if (product.prices && typeof product.prices === 'object') {
+        variants = Object.entries(product.prices).map(([name, price]) => ({
+          name,
+          price: typeof price === 'number' ? `${price}€` : price.toString()
+        }));
+      } else if (product.price) {
+        variants = [{ name: 'Standard', price: product.price }];
+      }
     }
-  }
+    return variants
+  }, [product.variants, product.prices, product.price])
   
-  const currentVariant = variants[selectedVariant] || variants[0] || { name: 'Standard', price: product?.price || 'N/A' }
+  const currentVariant = useMemo(() => 
+    variants[selectedVariant] || variants[0] || { name: 'Standard', price: product?.price || 'N/A' },
+    [variants, selectedVariant, product.price]
+  )
   
   // Trouver les noms de catégorie et farm (convertir en string pour la comparaison)
-  const categoryName = categories?.find(c => String(c.id) === String(product.category))?.name || product.category
-  const farmName = farms?.find(f => String(f.id) === String(product.farm))?.name || product.farm
+  const categoryName = useMemo(() => 
+    categories?.find(c => String(c.id) === String(product.category))?.name || product.category,
+    [categories, product.category]
+  )
+  const farmName = useMemo(() => 
+    farms?.find(f => String(f.id) === String(product.farm))?.name || product.farm,
+    [farms, product.farm]
+  )
   
   // Afficher la photo en priorité dans l'aperçu
-  const displayMedia = product.photo || product.image || product.video
+  const displayMedia = useMemo(() => 
+    product.photo || product.image || product.video,
+    [product.photo, product.image, product.video]
+  )
   
   // Fonction pour détecter si c'est une vidéo
-  const isVideo = (url) => {
+  const isVideo = useCallback((url) => {
     if (!url) return false
     const videoExtensions = ['.mp4', '.webm', '.mov', '.MOV', '.avi', '.mkv']
     return videoExtensions.some(ext => url.toLowerCase().includes(ext)) || url.startsWith('data:video')
-  }
+  }, [])
   
   // Fonction pour détecter si c'est un iframe Cloudflare Stream
-  const isCloudflareStreamIframe = (url) => {
+  const isCloudflareStreamIframe = useCallback((url) => {
     if (!url) return false
     return url.includes('cloudflarestream.com') && url.includes('iframe')
-  }
+  }, [])
 
   return (
     <motion.div
@@ -492,22 +529,24 @@ const ProductPreview = ({ product, onClose, categories, farms }) => {
             <p className="text-theme leading-relaxed text-sm sm:text-base">{product.description}</p>
 
             {/* Variantes */}
-            <div className="space-y-2 sm:space-y-3">
-              <h3 className="text-base sm:text-lg font-bold text-theme-heading">💰 Quantité & Prix</h3>
-              {Array.isArray(variants) && variants.map((variant, index) => (
-                <button
-                  key={index}
-                  onClick={() => setSelectedVariant(index)}
-                  className={`w-full p-2 sm:p-3 rounded-lg border-2 transition-all flex items-center justify-between ${
-                    selectedVariant === index
-                      ? 'border-white bg-white/10 text-white'
-                      : 'border-gray-700/30 bg-slate-800/50 text-gray-300 hover:border-white/50'
-                  }`}
-                >
-                  <span className="font-semibold text-sm sm:text-base">{variant.name}</span>
-                  <span className="text-lg sm:text-xl font-bold text-theme-accent">{variant?.price || 'N/A'}</span>
-                </button>
-              ))}
+            <div className="space-y-2">
+              <h3 className="text-sm font-bold text-theme-heading">💰 Options</h3>
+              <div className="grid grid-cols-2 gap-2">
+                {Array.isArray(variants) && variants.map((variant, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setSelectedVariant(index)}
+                    className={`p-2 rounded-lg border-2 transition-all flex flex-col items-center ${
+                      selectedVariant === index
+                        ? 'border-white bg-white/10 text-white'
+                        : 'border-gray-700/30 bg-slate-800/50 text-gray-300 hover:border-white/50'
+                    }`}
+                  >
+                    <span className="font-semibold text-xs">{variant.name}</span>
+                    <span className="text-sm font-bold text-theme-accent">{variant?.price || 'N/A'}</span>
+                  </button>
+                ))}
+              </div>
             </div>
 
             <Link to={`/products/${product.id}`}>
@@ -520,6 +559,6 @@ const ProductPreview = ({ product, onClose, categories, farms }) => {
       </motion.div>
     </motion.div>
   )
-}
+})
 
 export default Products

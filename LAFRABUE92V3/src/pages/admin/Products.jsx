@@ -96,7 +96,11 @@ const AdminProducts = () => {
         const entries = Object.entries(pricesObj)
         if (entries.length > 0) {
           const [name, price] = entries[0]
-          const displayPrice = typeof price === 'number' ? `${price}€` : String(price)
+          let displayPrice = typeof price === 'number' ? `${price}€` : String(price)
+          // Éviter les € en double
+          if (displayPrice.includes('€€')) {
+            displayPrice = displayPrice.replace('€€', '€')
+          }
           console.log('✅ Prix trouvé dans prices:', displayPrice)
           return displayPrice
         }
@@ -665,15 +669,15 @@ const ProductModal = ({ product, onClose, onSuccess }) => {
               </button>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-2">
               {variants.map((variant, index) => (
-                <div key={index} className="flex items-center space-x-2 bg-slate-800/50 p-3 rounded-lg">
+                <div key={index} className="flex items-center space-x-2 bg-slate-800/50 p-2 rounded-lg">
                   <input
                     type="text"
                     placeholder="5g"
                     value={variant.name}
                     onChange={(e) => updateVariant(index, 'name', e.target.value)}
-                    className="flex-1 px-3 py-2 bg-slate-800 border border-gray-700/30 rounded text-white focus:outline-none focus:border-white"
+                    className="flex-1 px-2 py-1.5 bg-slate-800 border border-gray-700/30 rounded text-white text-sm focus:outline-none focus:border-white"
                     required
                   />
                   <input
@@ -681,15 +685,15 @@ const ProductModal = ({ product, onClose, onSuccess }) => {
                     placeholder="20"
                     value={variant.price}
                     onChange={(e) => updateVariant(index, 'price', e.target.value)}
-                    className="flex-1 px-3 py-2 bg-slate-800 border border-gray-700/30 rounded text-white focus:outline-none focus:border-white"
+                    className="w-20 px-2 py-1.5 bg-slate-800 border border-gray-700/30 rounded text-white text-sm focus:outline-none focus:border-white"
                     required
                   />
-                  <span className="text-gray-400 px-2">€</span>
+                  <span className="text-gray-400 text-sm px-1">€</span>
                   {variants.length > 1 && (
                     <button
                       type="button"
                       onClick={() => removeVariant(index)}
-                      className="px-3 py-2 bg-gray-800/20 text-gray-400 rounded hover:bg-gray-700/30"
+                      className="px-2 py-1.5 bg-gray-800/20 text-gray-400 rounded hover:bg-gray-700/30 text-sm"
                     >
                       🗑️
                     </button>

@@ -118,7 +118,9 @@ const AdminFarms = () => {
 
 const FarmModal = ({ farm, onClose, onSuccess }) => {
   const [formData, setFormData] = useState({
-    name: farm?.name || ''
+    name: farm?.name || '',
+    description: farm?.description || '',
+    image: farm?.image || ''
   })
   const [loading, setLoading] = useState(false)
 
@@ -127,14 +129,33 @@ const FarmModal = ({ farm, onClose, onSuccess }) => {
     setLoading(true)
 
     try {
-      await save('farms', {
+      // Validation des données
+      if (!formData.name || formData.name.trim() === '') {
+        alert('Le nom de la farm est obligatoire')
+        setLoading(false)
+        return
+      }
+
+      const farmData = {
         id: farm?.id || Date.now().toString(),
-        ...formData
-      })
-      onSuccess()
+        name: formData.name.trim(),
+        description: formData.description || null,
+        image: formData.image || null
+      }
+
+      console.log('Sauvegarde de la farm:', farmData)
+      
+      const result = await save('farms', farmData)
+      console.log('Résultat de la sauvegarde:', result)
+      
+      if (result.success) {
+        onSuccess()
+      } else {
+        throw new Error(result.error || 'Erreur inconnue lors de la sauvegarde')
+      }
     } catch (error) {
       console.error('Error saving farm:', error)
-      alert('Erreur lors de la sauvegarde')
+      alert(`Erreur lors de la sauvegarde: ${error.message}`)
     } finally {
       setLoading(false)
     }
@@ -171,6 +192,28 @@ const FarmModal = ({ farm, onClose, onSuccess }) => {
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               required
               placeholder="Ex: Farm du Nord"
+              className="w-full px-4 py-3 bg-black border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gray-500 transition-colors"
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-300 mb-2">Description (optionnel)</label>
+            <textarea
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              placeholder="Description de la farm..."
+              rows="3"
+              className="w-full px-4 py-3 bg-black border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gray-500 transition-colors resize-none"
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-300 mb-2">Image (optionnel)</label>
+            <input
+              type="url"
+              value={formData.image}
+              onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+              placeholder="URL de l'image..."
               className="w-full px-4 py-3 bg-black border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gray-500 transition-colors"
             />
           </div>
