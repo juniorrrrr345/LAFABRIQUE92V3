@@ -500,7 +500,7 @@ const ProductModal = ({ product, onClose, onSuccess }) => {
       className="fixed inset-0 z-[9999] flex items-start justify-center pt-20 p-4"
       onClick={onClose}
     >
-      <div className="w-full max-w-md mx-auto">
+      <div className="w-full max-w-2xl mx-auto">
         <motion.div
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -665,13 +665,13 @@ const ProductModal = ({ product, onClose, onSuccess }) => {
 
             <div className="space-y-3">
               {variants.map((variant, index) => (
-                <div key={index} className="flex items-center space-x-2 bg-slate-800/50 p-3 rounded-lg">
+                <div key={index} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 bg-slate-800/50 p-3 rounded-lg">
                   <input
                     type="text"
                     placeholder="5g"
                     value={variant.name}
                     onChange={(e) => updateVariant(index, 'name', e.target.value)}
-                    className="flex-1 px-3 py-2 bg-slate-800 border border-gray-700/30 rounded text-white focus:outline-none focus:border-white"
+                    className="w-full sm:flex-1 px-3 py-2 bg-slate-800 border border-gray-700/30 rounded text-white focus:outline-none focus:border-white"
                     required
                   />
                   <input
@@ -679,14 +679,14 @@ const ProductModal = ({ product, onClose, onSuccess }) => {
                     placeholder="20€"
                     value={variant.price}
                     onChange={(e) => updateVariant(index, 'price', e.target.value)}
-                    className="flex-1 px-3 py-2 bg-slate-800 border border-gray-700/30 rounded text-white focus:outline-none focus:border-white"
+                    className="w-full sm:flex-1 px-3 py-2 bg-slate-800 border border-gray-700/30 rounded text-white focus:outline-none focus:border-white"
                     required
                   />
                   {variants.length > 1 && (
                     <button
                       type="button"
                       onClick={() => removeVariant(index)}
-                      className="px-3 py-2 bg-gray-800/20 text-gray-400 rounded hover:bg-gray-700/30"
+                      className="w-full sm:w-auto px-3 py-2 bg-gray-800/20 text-gray-400 rounded hover:bg-gray-700/30 flex items-center justify-center"
                     >
                       🗑️
                     </button>
