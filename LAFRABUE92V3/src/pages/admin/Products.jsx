@@ -32,6 +32,7 @@ const AdminProducts = () => {
       setProducts(sorted)
     } catch (error) {
       console.error('Error fetching products:', error)
+      alert(`Erreur lors du chargement des produits: ${error.message}`)
     } finally {
       setLoading(false)
     }
@@ -45,6 +46,7 @@ const AdminProducts = () => {
       setFarms(farmsList)
     } catch (error) {
       console.error('Error fetching categories/farms:', error)
+      alert(`Erreur lors du chargement des catégories/farms: ${error.message}`)
     }
   }
 

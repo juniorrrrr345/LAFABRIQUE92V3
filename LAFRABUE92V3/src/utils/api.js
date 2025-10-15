@@ -7,32 +7,33 @@ const API_URL = import.meta.env.VITE_API_URL || 'https://calitekv3.calitek-junio
 
 // ============ PRODUCTS ============
 export const getAll = async (type) => {
-  if (type === 'products') {
-    const response = await fetch(`${API_URL}/api/products`)
-    return await response.json()
+  try {
+    let response
+    
+    if (type === 'products') {
+      response = await fetch(`${API_URL}/api/products`)
+    } else if (type === 'categories') {
+      response = await fetch(`${API_URL}/api/categories`)
+    } else if (type === 'socials') {
+      response = await fetch(`${API_URL}/api/socials`)
+    } else if (type === 'settings') {
+      response = await fetch(`${API_URL}/api/settings`)
+    } else if (type === 'farms') {
+      response = await fetch(`${API_URL}/api/farms`)
+    } else {
+      return []
+    }
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+    }
+    
+    const data = await response.json()
+    return data || []
+  } catch (error) {
+    console.error(`Error fetching ${type}:`, error)
+    throw error
   }
-  
-  if (type === 'categories') {
-    const response = await fetch(`${API_URL}/api/categories`)
-    return await response.json()
-  }
-  
-  if (type === 'socials') {
-    const response = await fetch(`${API_URL}/api/socials`)
-    return await response.json()
-  }
-  
-  if (type === 'settings') {
-    const response = await fetch(`${API_URL}/api/settings`)
-    return await response.json()
-  }
-  
-  if (type === 'farms') {
-    const response = await fetch(`${API_URL}/api/farms`)
-    return await response.json()
-  }
-  
-  return []
 }
 
 export const getById = async (type, id) => {
@@ -50,92 +51,93 @@ export const getById = async (type, id) => {
 }
 
 export const save = async (type, data) => {
-  if (type === 'products') {
-    const method = data.id ? 'PUT' : 'POST'
-    const url = data.id ? `${API_URL}/api/products/${data.id}` : `${API_URL}/api/products`
+  try {
+    let response
+    let url
+    let method
     
-    const response = await fetch(url, {
+    if (type === 'products') {
+      method = data.id ? 'PUT' : 'POST'
+      url = data.id ? `${API_URL}/api/products/${data.id}` : `${API_URL}/api/products`
+    } else if (type === 'categories') {
+      method = data.id && data.id !== 'new' ? 'PUT' : 'POST'
+      url = data.id && data.id !== 'new' ? `${API_URL}/api/categories/${data.id}` : `${API_URL}/api/categories`
+    } else if (type === 'socials') {
+      method = data.id && data.id !== 'new' ? 'PUT' : 'POST'
+      url = data.id && data.id !== 'new' ? `${API_URL}/api/socials/${data.id}` : `${API_URL}/api/socials`
+    } else if (type === 'settings') {
+      method = 'PUT'
+      url = data.key ? `${API_URL}/api/settings/${data.key}` : `${API_URL}/api/settings`
+    } else if (type === 'farms') {
+      method = data.id && data.id !== 'new' ? 'PUT' : 'POST'
+      url = data.id && data.id !== 'new' ? `${API_URL}/api/farms/${data.id}` : `${API_URL}/api/farms`
+    } else {
+      throw new Error(`Type non supporté: ${type}`)
+    }
+    
+    response = await fetch(url, {
       method,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     })
-    return await response.json()
-  }
-  
-  if (type === 'categories') {
-    const method = data.id && data.id !== 'new' ? 'PUT' : 'POST'
-    const url = data.id && data.id !== 'new' ? `${API_URL}/api/categories/${data.id}` : `${API_URL}/api/categories`
     
-    const response = await fetch(url, {
-      method,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    })
-    return await response.json()
-  }
-  
-  if (type === 'socials') {
-    const method = data.id && data.id !== 'new' ? 'PUT' : 'POST'
-    const url = data.id && data.id !== 'new' ? `${API_URL}/api/socials/${data.id}` : `${API_URL}/api/socials`
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`HTTP ${response.status}: ${response.statusText} - ${errorText}`)
+    }
     
-    const response = await fetch(url, {
-      method,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    })
-    return await response.json()
-  }
-  
-  if (type === 'settings') {
-    const url = data.key ? `${API_URL}/api/settings/${data.key}` : `${API_URL}/api/settings`
-    const response = await fetch(url, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    })
-    return await response.json()
-  }
-  
-  if (type === 'farms') {
-    const method = data.id && data.id !== 'new' ? 'PUT' : 'POST'
-    const url = data.id && data.id !== 'new' ? `${API_URL}/api/farms/${data.id}` : `${API_URL}/api/farms`
-    
-    const response = await fetch(url, {
-      method,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    })
-    return await response.json()
+    const contentType = response.headers.get('content-type')
+    if (contentType && contentType.includes('application/json')) {
+      return await response.json()
+    } else {
+      const text = await response.text()
+      return { success: true, message: text }
+    }
+  } catch (error) {
+    console.error(`Error saving ${type}:`, error)
+    throw error
   }
 }
 
 export const remove = async (type, id) => {
-  if (type === 'products') {
-    const response = await fetch(`${API_URL}/api/products/${id}`, {
-      method: 'DELETE'
-    })
-    return await response.json()
-  }
-  
-  if (type === 'categories') {
-    const response = await fetch(`${API_URL}/api/categories/${id}`, {
-      method: 'DELETE'
-    })
-    return await response.json()
-  }
-  
-  if (type === 'socials') {
-    const response = await fetch(`${API_URL}/api/socials/${id}`, {
-      method: 'DELETE'
-    })
-    return await response.json()
-  }
-  
-  if (type === 'farms') {
-    const response = await fetch(`${API_URL}/api/farms/${id}`, {
-      method: 'DELETE'
-    })
-    return await response.json()
+  try {
+    let response
+    
+    if (type === 'products') {
+      response = await fetch(`${API_URL}/api/products/${id}`, {
+        method: 'DELETE'
+      })
+    } else if (type === 'categories') {
+      response = await fetch(`${API_URL}/api/categories/${id}`, {
+        method: 'DELETE'
+      })
+    } else if (type === 'socials') {
+      response = await fetch(`${API_URL}/api/socials/${id}`, {
+        method: 'DELETE'
+      })
+    } else if (type === 'farms') {
+      response = await fetch(`${API_URL}/api/farms/${id}`, {
+        method: 'DELETE'
+      })
+    } else {
+      throw new Error(`Type non supporté: ${type}`)
+    }
+    
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`HTTP ${response.status}: ${response.statusText} - ${errorText}`)
+    }
+    
+    const contentType = response.headers.get('content-type')
+    if (contentType && contentType.includes('application/json')) {
+      return await response.json()
+    } else {
+      const text = await response.text()
+      return { success: true, message: text }
+    }
+  } catch (error) {
+    console.error(`Error removing ${type}:`, error)
+    throw error
   }
 }
 

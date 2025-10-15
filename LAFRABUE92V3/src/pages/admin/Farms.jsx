@@ -18,6 +18,7 @@ const AdminFarms = () => {
       setFarms(data)
     } catch (error) {
       console.error('Error fetching farms:', error)
+      alert(`Erreur lors du chargement des farms: ${error.message}`)
     } finally {
       setLoading(false)
     }
