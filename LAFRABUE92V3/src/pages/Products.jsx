@@ -69,7 +69,11 @@ const Products = () => {
 
     // Filtre par catégorie
     if (selectedCategory) {
-      filtered = filtered.filter(product => String(product.category) === String(selectedCategory))
+      filtered = filtered.filter(product => {
+        const productCategory = String(product.category)
+        const selectedCat = String(selectedCategory)
+        return productCategory === selectedCat
+      })
     }
 
     // Filtre par farm

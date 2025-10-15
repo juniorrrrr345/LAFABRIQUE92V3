@@ -21,7 +21,7 @@ const Categories = () => {
         const products = await getAll('products')
         const counts = {}
         products.forEach(product => {
-          const cat = product.category
+          const cat = String(product.category) // Convertir en string pour la correspondance
           counts[cat] = (counts[cat] || 0) + 1
         })
         setProductCounts(counts)
@@ -86,7 +86,7 @@ const Categories = () => {
                   key={category.id} 
                   category={category} 
                   index={index}
-                  count={productCounts[category.id] || 0}
+                  count={productCounts[String(category.id)] || 0}
                   gradient={gradients[index % gradients.length]}
                 />
               ))}

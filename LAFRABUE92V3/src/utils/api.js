@@ -32,6 +32,11 @@ export const getAll = async (type) => {
     return await response.json()
   }
   
+  if (type === 'orders') {
+    const response = await fetch(`${API_URL}/api/orders`)
+    return await response.json()
+  }
+  
   return []
 }
 
@@ -107,6 +112,15 @@ export const save = async (type, data) => {
     })
     return await response.json()
   }
+  
+  if (type === 'orders') {
+    const response = await fetch(`${API_URL}/api/orders`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    })
+    return await response.json()
+  }
 }
 
 export const remove = async (type, id) => {
@@ -133,6 +147,13 @@ export const remove = async (type, id) => {
   
   if (type === 'farms') {
     const response = await fetch(`${API_URL}/api/farms/${id}`, {
+      method: 'DELETE'
+    })
+    return await response.json()
+  }
+  
+  if (type === 'orders') {
+    const response = await fetch(`${API_URL}/api/orders/${id}`, {
       method: 'DELETE'
     })
     return await response.json()
