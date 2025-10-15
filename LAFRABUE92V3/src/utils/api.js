@@ -94,7 +94,7 @@ export const save = async (type, data) => {
   if (type === 'settings') {
     const url = data.key ? `${API_URL}/api/settings/${data.key}` : `${API_URL}/api/settings`
     const response = await fetch(url, {
-      method: 'PUT',
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     })
