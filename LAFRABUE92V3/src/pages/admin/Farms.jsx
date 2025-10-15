@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { getAll, save, remove } from '../../utils/api'
-import { uploadToR2 } from '../../utils/cloudflare'
 
 const AdminFarms = () => {
   const [farms, setFarms] = useState([])
@@ -72,33 +71,26 @@ const AdminFarms = () => {
       </div>
 
       {/* Farms Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
         {farms.map((farm) => (
           <motion.div
             key={farm.id}
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="neon-border rounded-2xl p-6 bg-slate-900/50 backdrop-blur-sm"
+            className="border border-gray-700 rounded-xl p-4 bg-black/50 hover:bg-black/70 transition-colors"
           >
-            {farm.image && farm.image.startsWith('http') ? (
-              <div className="w-full h-32 mb-4 rounded-lg overflow-hidden bg-slate-800">
-                <img src={farm.image} alt={farm.name} className="w-full h-full object-cover" />
-              </div>
-            ) : (
-              <div className="text-5xl mb-4 text-center">🌾</div>
-            )}
-            <h3 className="text-xl font-bold text-white mb-2">{farm.name}</h3>
-            <p className="text-gray-400 text-sm mb-4">{farm.description}</p>
+            <h3 className="text-lg font-bold text-white mb-3">🌾 {farm.name}</h3>
+            
             <div className="flex gap-2">
               <button
                 onClick={() => handleEdit(farm)}
-                className="flex-1 px-3 py-2 bg-gray-700/20 border border-gray-600/50 rounded-lg text-gray-300 hover:bg-gray-600/30 transition-colors text-sm"
+                className="flex-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white hover:bg-gray-600 transition-colors text-sm"
               >
                 ✏️ Modifier
               </button>
               <button
                 onClick={() => handleDelete(farm.id)}
-                className="flex-1 px-3 py-2 bg-gray-800/20 border border-gray-600/50 rounded-lg text-gray-400 hover:bg-gray-700/30 transition-colors text-sm"
+                className="flex-1 px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-gray-400 hover:bg-gray-700 transition-colors text-sm"
               >
                 🗑️ Supprimer
               </button>
@@ -191,7 +183,7 @@ const FarmModal = ({ farm, onClose, onSuccess }) => {
           <div className="flex gap-3">
             <button
               type="submit"
-              disabled={loading || uploadingImage}
+              disabled={loading}
               className="flex-1 py-3 bg-white text-black rounded-lg font-bold hover:bg-gray-200 transition-all disabled:opacity-50"
             >
               {loading ? 'Enregistrement...' : 'Enregistrer'}
