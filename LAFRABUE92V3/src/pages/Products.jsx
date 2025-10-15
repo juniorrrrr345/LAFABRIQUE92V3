@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import Footer from '../components/Footer'
 import ProductLoading from '../components/ProductLoading'
+import ProductSkeleton from '../components/ProductSkeleton'
 
 const Products = () => {
   const [searchParams] = useSearchParams()
@@ -108,7 +109,40 @@ const Products = () => {
   }
 
   if (loading) {
-    return <ProductLoading message={loadingMessage} progress={loadingProgress} />
+    return (
+      <div className="min-h-screen cosmic-bg">
+        <div className="pt-20 pb-8 sm:pb-16 lg:pb-24 px-4">
+          <div className="max-w-7xl mx-auto">
+            {/* Header avec skeleton */}
+            <motion.div
+              initial={{ opacity: 0, y: -30 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-center mb-12 flex flex-col items-center"
+            >
+              <div className="inline-block bg-black/90 backdrop-blur-xl rounded-full px-16 py-10 border-2 border-white/30 shadow-[0_0_40px_rgba(0,0,0,0.8)] mb-8">
+                <h1 className="text-5xl md:text-7xl font-bold mb-3 text-white">
+                  Notre Boutique
+                </h1>
+                <p className="text-lg text-gray-300">
+                  Découvrez notre sélection de produits choisis avec amour
+                </p>
+              </div>
+
+              {/* Barre de recherche skeleton */}
+              <div className="max-w-3xl mx-auto w-full">
+                <div className="relative">
+                  <div className="w-full h-14 bg-slate-700/50 rounded-xl animate-pulse"></div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Skeleton des produits */}
+            <ProductSkeleton count={12} />
+          </div>
+        </div>
+        <Footer />
+      </div>
+    )
   }
 
   return (
