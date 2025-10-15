@@ -21,31 +21,36 @@ export const LoadingProvider = ({ children }) => {
     const loadApp = async () => {
       try {
         setLoadingMessage('🚀 Initialisation de votre boutique...')
-        setLoadingProgress(15)
-        await new Promise(resolve => setTimeout(resolve, 600))
+        setLoadingProgress(10)
+        await new Promise(resolve => setTimeout(resolve, 800))
 
-        setLoadingMessage('✨ Chargement des produits premium...')
-        setLoadingProgress(30)
+        setLoadingMessage('⚡ Chargement des composants...')
+        setLoadingProgress(25)
         await new Promise(resolve => setTimeout(resolve, 700))
 
+        setLoadingMessage('✨ Chargement des produits premium...')
+        setLoadingProgress(40)
+        await new Promise(resolve => setTimeout(resolve, 800))
+
         setLoadingMessage('🎨 Application de votre thème personnalisé...')
-        setLoadingProgress(50)
-        await new Promise(resolve => setTimeout(resolve, 600))
+        setLoadingProgress(55)
+        await new Promise(resolve => setTimeout(resolve, 700))
 
         setLoadingMessage('🛍️ Préparation de votre expérience shopping...')
         setLoadingProgress(70)
-        await new Promise(resolve => setTimeout(resolve, 500))
+        await new Promise(resolve => setTimeout(resolve, 600))
 
         setLoadingMessage('💎 Optimisation des performances...')
         setLoadingProgress(85)
+        await new Promise(resolve => setTimeout(resolve, 500))
+
+        setLoadingMessage('🎉 Finalisation...')
+        setLoadingProgress(95)
         await new Promise(resolve => setTimeout(resolve, 400))
 
-        setLoadingMessage('🎉 Presque prêt...')
-        setLoadingProgress(95)
-        await new Promise(resolve => setTimeout(resolve, 300))
-
+        setLoadingMessage('✅ Prêt !')
         setLoadingProgress(100)
-        await new Promise(resolve => setTimeout(resolve, 200))
+        await new Promise(resolve => setTimeout(resolve, 300))
         
         setIsLoading(false)
         setHasLoadedOnce(true)
