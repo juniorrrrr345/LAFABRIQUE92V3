@@ -19,14 +19,12 @@ const AdminOrderSettings = () => {
       const data = await getAll('settings')
       console.log('Settings chargés:', data)
       
-      // Chercher les paramètres de commande dans les settings
-      const orderSettings = data.find(s => s.key === 'orderSettings')
-      console.log('Order settings trouvés:', orderSettings)
-      
-      if (orderSettings) {
+      // Les settings sont maintenant un objet, pas un tableau
+      if (data.orderSettings) {
+        console.log('Order settings trouvés:', data.orderSettings)
         setSettings({
-          orderLink: orderSettings.orderLink || '',
-          orderButtonText: orderSettings.orderButtonText || 'Commander'
+          orderLink: data.orderSettings.orderLink || '',
+          orderButtonText: data.orderSettings.orderButtonText || 'Commander'
         })
       } else {
         // Si pas de settings trouvés, essayer de charger directement
