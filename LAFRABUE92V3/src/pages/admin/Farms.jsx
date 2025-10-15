@@ -145,18 +145,16 @@ const FarmModal = ({ farm, onClose, onSuccess }) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black z-[9999] flex items-start justify-center overflow-y-auto"
+      className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[9999] flex items-center justify-center overflow-y-auto p-4"
       onClick={onClose}
-      style={{ backgroundColor: 'rgba(0, 0, 0, 0.95)' }}
     >
-      <div className="w-full px-2 sm:px-4 py-8">
+      <div className="w-full max-w-md mx-auto">
         <motion.div
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
-          className="border border-gray-700 rounded-2xl p-6 bg-black max-w-md w-full mx-auto"
+          className="neon-border rounded-2xl p-6 bg-slate-900 w-full"
           onClick={(e) => e.stopPropagation()}
-          style={{ backgroundColor: '#000000' }}
         >
         <h2 className="text-2xl font-bold text-white mb-6">
           {farm ? '✏️ Modifier la farm' : '➕ Ajouter une farm'}
