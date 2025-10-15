@@ -1,107 +1,112 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-black text-white;
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    position: relative;
+    /* Optimiser les performances */
+    will-change: auto;
+    transform: translateZ(0);
+  }
+  
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.1);
+    z-index: -1;
+    pointer-events: none;
+  }
+  
+  /* Assurer que le contenu est au-dessus de l'overlay */
+  #root {
+    position: relative;
+    z-index: 1;
+  }
+  
+  /* Police élégante pour les grands titres */
+  h1, .hero-title {
+    font-family: var(--title-font, 'Playfair Display'), serif;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+  }
+  
+  /* Définir les variables CSS par défaut */
+  :root {
+    --title-font: 'Playfair Display';
+    --color-text: #ffffff;
+    --color-text-secondary: #9ca3af;
+    --color-heading: #ffffff;
+    --color-accent: #ffffff;
+  }
+  
+  /* Optimiser les animations */
+  * {
+    -webkit-backface-visibility: hidden;
+    -webkit-perspective: 1000;
+  }
 }
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background-color: #f8f9fa;
+@layer utilities {
+  /* Classes pour utiliser les couleurs personnalisables */
+  .text-theme {
+    color: var(--color-text);
+  }
+  
+  .text-theme-secondary {
+    color: var(--color-text-secondary);
+  }
+  
+  .text-theme-heading {
+    color: var(--color-heading);
+  }
+  
+  .text-theme-accent {
+    color: var(--color-accent);
+  }
+  
+  .text-gradient {
+    color: var(--color-heading);
+  }
+  
+  .glow-effect {
+    text-shadow: none;
+  }
+
+  .neon-border {
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .cosmic-bg {
+    /* Le fond est géré dynamiquement par DynamicBackground via body.style.backgroundImage */
+    background: transparent;
+  }
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+/* Scrollbar personnalisée */
+::-webkit-scrollbar {
+  width: 10px;
 }
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
+::-webkit-scrollbar-track {
+  background: #000000;
 }
 
-.btn {
-  padding: 10px 20px;
-  border: none;
+::-webkit-scrollbar-thumb {
+  background: #333333;
   border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: all 0.3s ease;
 }
 
-.btn-primary {
-  background-color: #007bff;
-  color: white;
-}
-
-.btn-primary:hover {
-  background-color: #0056b3;
-}
-
-.btn-success {
-  background-color: #28a745;
-  color: white;
-}
-
-.btn-success:hover {
-  background-color: #1e7e34;
-}
-
-.btn-danger {
-  background-color: #dc3545;
-  color: white;
-}
-
-.btn-danger:hover {
-  background-color: #c82333;
-}
-
-.form-group {
-  margin-bottom: 20px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
-}
-
-.form-group input,
-.form-group textarea,
-.form-group select {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  font-size: 16px;
-}
-
-.card {
-  background: white;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  margin-bottom: 20px;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
-}
-
-.text-center {
-  text-align: center;
-}
-
-.mb-4 {
-  margin-bottom: 1.5rem;
-}
-
-.mt-4 {
-  margin-top: 1.5rem;
+::-webkit-scrollbar-thumb:hover {
+  background: #555555;
 }

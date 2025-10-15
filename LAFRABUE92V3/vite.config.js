@@ -4,11 +4,12 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server: {
-    port: 3000,
-    host: true
-  },
-  build: {
-    outDir: 'dist',
-    sourcemap: true
+    port: 5173, // Port par défaut de Vite
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8787', // Worker Cloudflare en développement
+        changeOrigin: true
+      }
+    }
   }
 })

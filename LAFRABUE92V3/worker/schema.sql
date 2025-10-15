@@ -12,31 +12,33 @@ CREATE TABLE IF NOT EXISTS products (
     farm TEXT,
     photo TEXT,
     video TEXT,
+    image TEXT,
     medias TEXT,
     variants TEXT,
     price TEXT,
-    createdAt TEXT,
-    updatedAt TEXT
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+    updated_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS categories (
     id TEXT PRIMARY KEY,
     name TEXT NOT NULL,
     icon TEXT,
-    description TEXT
+    description TEXT,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS farms (
     id TEXT PRIMARY KEY,
     name TEXT NOT NULL,
-    image TEXT,
-    description TEXT
+    description TEXT,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS admin_users (
+CREATE TABLE IF NOT EXISTS users (
     id TEXT PRIMARY KEY,
-    username TEXT NOT NULL UNIQUE,
+    username TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
-    createdAt TEXT,
-    updatedAt TEXT
+    role TEXT DEFAULT 'admin',
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
