@@ -165,7 +165,9 @@ async function handleInit(env, corsHeaders) {
         id TEXT PRIMARY KEY,
         name TEXT NOT NULL,
         image TEXT,
-        description TEXT
+        description TEXT,
+        createdAt TEXT,
+        updatedAt TEXT
       )
     `).run()
 
@@ -595,10 +597,31 @@ async function createFarm(request, env, corsHeaders) {
   const data = await request.json()
   const id = data.id || Date.now().toString()
   
-  await env.DB.prepare(`
-    INSERT OR REPLACE INTO farms (id, name, image, description)
-    VALUES (?, ?, ?, ?)
-  `).bind(id, data.name, data.image || null, data.description || null).run()
+  // Essayer d'abord avec le nouveau schéma, puis avec l'ancien
+  try {
+    await env.DB.prepare(`
+      INSERT OR REPLACE INTO farms (id, name, image, description, createdAt, updatedAt)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `).bind(
+      id, 
+      data.name, 
+      data.image || null, 
+      data.description || null,
+      data.createdAt || new Date().toISOString(),
+      new Date().toISOString()
+    ).run()
+  } catch (error) {
+    // Si ça échoue, utiliser l'ancien schéma
+    await env.DB.prepare(`
+      INSERT OR REPLACE INTO farms (id, name, image, description)
+      VALUES (?, ?, ?, ?)
+    `).bind(
+      id, 
+      data.name, 
+      data.image || null, 
+      data.description || null
+    ).run()
+  }
 
   return new Response(JSON.stringify({ success: true, id }), {
     headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -608,10 +631,31 @@ async function createFarm(request, env, corsHeaders) {
 async function updateFarm(id, request, env, corsHeaders) {
   const data = await request.json()
   
-  await env.DB.prepare(`
-    INSERT OR REPLACE INTO farms (id, name, image, description)
-    VALUES (?, ?, ?, ?)
-  `).bind(id, data.name, data.image || null, data.description || null).run()
+  // Essayer d'abord avec le nouveau schéma, puis avec l'ancien
+  try {
+    await env.DB.prepare(`
+      INSERT OR REPLACE INTO farms (id, name, image, description, createdAt, updatedAt)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `).bind(
+      id, 
+      data.name, 
+      data.image || null, 
+      data.description || null,
+      data.createdAt || new Date().toISOString(),
+      new Date().toISOString()
+    ).run()
+  } catch (error) {
+    // Si ça échoue, utiliser l'ancien schéma
+    await env.DB.prepare(`
+      INSERT OR REPLACE INTO farms (id, name, image, description)
+      VALUES (?, ?, ?, ?)
+    `).bind(
+      id, 
+      data.name, 
+      data.image || null, 
+      data.description || null
+    ).run()
+  }
 
   return new Response(JSON.stringify({ success: true }), {
     headers: { ...corsHeaders, 'Content-Type': 'application/json' }

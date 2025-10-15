@@ -127,10 +127,17 @@ const FarmModal = ({ farm, onClose, onSuccess }) => {
     setLoading(true)
 
     try {
-      await save('farms', {
+      const farmData = {
         id: farm?.id || Date.now().toString(),
-        ...formData
-      })
+        ...formData,
+        updatedAt: new Date().toISOString()
+      }
+
+      if (!farm) {
+        farmData.createdAt = new Date().toISOString()
+      }
+
+      await save('farms', farmData)
       onSuccess()
     } catch (error) {
       console.error('Error saving farm:', error)
