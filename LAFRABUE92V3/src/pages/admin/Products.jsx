@@ -678,12 +678,13 @@ const ProductModal = ({ product, onClose, onSuccess }) => {
                   />
                   <input
                     type="text"
-                    placeholder="20€"
+                    placeholder="20"
                     value={variant.price}
                     onChange={(e) => updateVariant(index, 'price', e.target.value)}
                     className="flex-1 px-3 py-2 bg-slate-800 border border-gray-700/30 rounded text-white focus:outline-none focus:border-white"
                     required
                   />
+                  <span className="text-gray-400 px-2">€</span>
                   {variants.length > 1 && (
                     <button
                       type="button"
