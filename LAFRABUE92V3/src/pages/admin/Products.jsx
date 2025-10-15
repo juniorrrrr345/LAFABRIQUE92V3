@@ -500,12 +500,12 @@ const ProductModal = ({ product, onClose, onSuccess }) => {
       className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[9999] flex items-center justify-center overflow-y-auto p-4"
       onClick={onClose}
     >
-      <div className="w-full max-w-2xl mx-auto">
+      <div className="w-full max-w-4xl mx-auto">
         <motion.div
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
-          className="neon-border rounded-2xl p-4 sm:p-6 lg:p-8 bg-slate-900 w-full"
+          className="neon-border rounded-2xl p-6 lg:p-8 bg-slate-900 w-full"
           onClick={(e) => e.stopPropagation()}
         >
         <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gradient mb-4 sm:mb-6">
