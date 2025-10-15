@@ -24,7 +24,7 @@
     right: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.1);
-    z-index: -1;
+    z-index: -2;
     pointer-events: none;
   }
   
@@ -32,6 +32,16 @@
   #root {
     position: relative;
     z-index: 1;
+  }
+  
+  /* S'assurer que les modales sont toujours visibles */
+  .modal-overlay {
+    z-index: 9999 !important;
+  }
+  
+  .modal-content {
+    z-index: 10000 !important;
+    position: relative;
   }
   
   /* Police élégante pour les grands titres */
@@ -130,7 +140,7 @@
 
 .modal-content {
   background: #0f172a;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 1rem;
   padding: 2rem;
   max-width: 32rem;
@@ -138,6 +148,7 @@
   max-height: 95vh;
   overflow-y: auto;
   position: relative;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
 }
 
 /* Assurer que les modales sont toujours visibles */
@@ -146,4 +157,40 @@
     align-items: flex-start;
     padding-top: 2rem;
   }
+}
+
+/* Améliorer la visibilité des champs de formulaire */
+.modal-content input,
+.modal-content textarea,
+.modal-content select {
+  background: #1e293b !important;
+  border: 2px solid #475569 !important;
+  color: #ffffff !important;
+  font-weight: 500;
+}
+
+.modal-content input:focus,
+.modal-content textarea:focus,
+.modal-content select:focus {
+  border-color: #ffffff !important;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1) !important;
+  outline: none !important;
+}
+
+.modal-content label {
+  color: #e2e8f0 !important;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+/* Améliorer la visibilité des boutons */
+.modal-content button {
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.modal-content button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }

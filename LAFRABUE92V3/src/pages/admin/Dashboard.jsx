@@ -2,6 +2,7 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import APIDiagnostic from '../../components/admin/APIDiagnostic'
+import ConnectionTest from '../../components/admin/ConnectionTest'
 
 const Dashboard = () => {
   return (
@@ -65,8 +66,9 @@ const Dashboard = () => {
       </div>
 
       {/* Diagnostic API */}
-      <div className="mt-8">
+      <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
         <APIDiagnostic />
+        <ConnectionTest />
       </div>
     </div>
   )

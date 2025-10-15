@@ -4,6 +4,31 @@
 
 const API_URL = import.meta.env.VITE_API_URL || 'https://calitekv3.calitek-junior.workers.dev'
 
+// Configuration de base pour les requêtes
+const defaultHeaders = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json',
+}
+
+// Fonction pour faire des requêtes avec retry
+async function fetchWithRetry(url, options = {}, retries = 3) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      const response = await fetch(url, {
+        ...options,
+        headers: { ...defaultHeaders, ...options.headers },
+        mode: 'cors',
+        credentials: 'omit'
+      })
+      return response
+    } catch (error) {
+      console.warn(`Tentative ${i + 1} échouée:`, error.message)
+      if (i === retries - 1) throw error
+      await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)))
+    }
+  }
+}
+
 
 // ============ PRODUCTS ============
 export const getAll = async (type) => {
@@ -11,15 +36,15 @@ export const getAll = async (type) => {
     let response
     
     if (type === 'products') {
-      response = await fetch(`${API_URL}/api/products`)
+      response = await fetchWithRetry(`${API_URL}/api/products`)
     } else if (type === 'categories') {
-      response = await fetch(`${API_URL}/api/categories`)
+      response = await fetchWithRetry(`${API_URL}/api/categories`)
     } else if (type === 'socials') {
-      response = await fetch(`${API_URL}/api/socials`)
+      response = await fetchWithRetry(`${API_URL}/api/socials`)
     } else if (type === 'settings') {
-      response = await fetch(`${API_URL}/api/settings`)
+      response = await fetchWithRetry(`${API_URL}/api/settings`)
     } else if (type === 'farms') {
-      response = await fetch(`${API_URL}/api/farms`)
+      response = await fetchWithRetry(`${API_URL}/api/farms`)
     } else {
       return []
     }
@@ -32,7 +57,7 @@ export const getAll = async (type) => {
     return data || []
   } catch (error) {
     console.error(`Error fetching ${type}:`, error)
-    throw error
+    throw new Error(`Impossible de récupérer les ${type}. Vérifiez votre connexion internet.`)
   }
 }
 
@@ -75,9 +100,8 @@ export const save = async (type, data) => {
       throw new Error(`Type non supporté: ${type}`)
     }
     
-    response = await fetch(url, {
+    response = await fetchWithRetry(url, {
       method,
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     })
     
@@ -104,19 +128,19 @@ export const remove = async (type, id) => {
     let response
     
     if (type === 'products') {
-      response = await fetch(`${API_URL}/api/products/${id}`, {
+      response = await fetchWithRetry(`${API_URL}/api/products/${id}`, {
         method: 'DELETE'
       })
     } else if (type === 'categories') {
-      response = await fetch(`${API_URL}/api/categories/${id}`, {
+      response = await fetchWithRetry(`${API_URL}/api/categories/${id}`, {
         method: 'DELETE'
       })
     } else if (type === 'socials') {
-      response = await fetch(`${API_URL}/api/socials/${id}`, {
+      response = await fetchWithRetry(`${API_URL}/api/socials/${id}`, {
         method: 'DELETE'
       })
     } else if (type === 'farms') {
-      response = await fetch(`${API_URL}/api/farms/${id}`, {
+      response = await fetchWithRetry(`${API_URL}/api/farms/${id}`, {
         method: 'DELETE'
       })
     } else {
