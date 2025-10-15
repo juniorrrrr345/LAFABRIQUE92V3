@@ -17,17 +17,21 @@ const FarmSocialSlide = ({ isOpen, onClose, onConfirm, productData, contentType 
   }, [isOpen, productData, contentType])
 
   const generateDefaultMessage = (type, data) => {
+    // Nettoyer les données pour supprimer les caractères indésirables
+    const cleanName = (data?.name || '').replace(/^[ds]\s*$/, '').trim() || (type === 'product' ? 'Produit' : type === 'farm' ? 'Ferme' : type === 'category' ? 'Catégorie' : 'Réseau social')
+    const cleanDescription = (data?.description || '').replace(/^[ds]\s*$/, '').trim()
+    
     switch (type) {
       case 'product':
-        return `🛍️ Nouveau produit disponible !\n\n${data?.name || 'Produit'}\n${data?.description || ''}\n\nDécouvrez nos produits ! 🛒`
+        return `🛍️ Nouveau produit disponible !\n\n${cleanName}\n${cleanDescription}\n\nDécouvrez nos produits ! 🛒`
       case 'farm':
-        return `🌾 Nouvelle ferme ajoutée !\n\n${data?.name || 'Ferme'}\n\nDécouvrez nos producteurs locaux ! 🚜`
+        return `🌾 Nouvelle ferme ajoutée !\n\n${cleanName}\n\nDécouvrez nos producteurs locaux ! 🚜`
       case 'category':
-        return `📂 Nouvelle catégorie disponible !\n\n${data?.name || 'Catégorie'}\n${data?.description || ''}\n\nExplorez nos produits ! 🛍️`
+        return `📂 Nouvelle catégorie disponible !\n\n${cleanName}\n${cleanDescription}\n\nExplorez nos produits ! 🛍️`
       case 'social':
-        return `📱 Nouveau réseau social ajouté !\n\n${data?.name || 'Réseau social'}\n${data?.description || ''}\n\nSuivez-nous ! 👥`
+        return `📱 Nouveau réseau social ajouté !\n\n${cleanName}\n${cleanDescription}\n\nSuivez-nous ! 👥`
       default:
-        return `✨ Nouveau contenu disponible !\n\n${data?.name || 'Contenu'}\n${data?.description || ''}\n\nDécouvrez plus ! 🎉`
+        return `✨ Nouveau contenu disponible !\n\n${cleanName}\n${cleanDescription}\n\nDécouvrez plus ! 🎉`
     }
   }
 
@@ -202,8 +206,12 @@ const FarmSocialSlide = ({ isOpen, onClose, onConfirm, productData, contentType 
                   {contentType === 'social' && (productData?.icon || '📱')}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-white font-semibold truncate text-sm sm:text-base">{productData?.name || 'Contenu'}</h3>
-                  <p className="text-gray-400 text-xs sm:text-sm line-clamp-2">{productData?.description || ''}</p>
+                  <h3 className="text-white font-semibold truncate text-sm sm:text-base">
+                    {(productData?.name || 'Contenu').replace(/^[ds]\s*$/, '').trim() || 'Contenu'}
+                  </h3>
+                  <p className="text-gray-400 text-xs sm:text-sm line-clamp-2">
+                    {(productData?.description || '').replace(/^[ds]\s*$/, '').trim()}
+                  </p>
                   <div className="flex items-center space-x-1 sm:space-x-2 mt-1 flex-wrap">
                     <span className={`px-2 py-1 text-xs rounded-full ${
                       contentType === 'product' ? 'bg-blue-600/20 text-blue-400' :
