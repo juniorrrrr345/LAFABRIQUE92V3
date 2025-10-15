@@ -17,11 +17,30 @@ const AdminOrderSettings = () => {
   const loadSettings = async () => {
     try {
       const data = await getAll('settings')
-      if (data.orderLink || data.orderButtonText) {
+      console.log('Settings chargés:', data)
+      
+      // Les settings sont maintenant un objet, pas un tableau
+      if (data.orderSettings) {
+        console.log('Order settings trouvés:', data.orderSettings)
         setSettings({
-          orderLink: data.orderLink || '',
-          orderButtonText: data.orderButtonText || 'Commander'
+          orderLink: data.orderSettings.orderLink || '',
+          orderButtonText: data.orderSettings.orderButtonText || 'Commander'
         })
+      } else {
+        // Si pas de settings trouvés, essayer de charger directement
+        try {
+          const response = await fetch(`${import.meta.env.VITE_API_URL || 'https://calitekv3.calitek-junior.workers.dev'}/api/settings/orderSettings`)
+          if (response.ok) {
+            const directSettings = await response.json()
+            console.log('Settings directs:', directSettings)
+            setSettings({
+              orderLink: directSettings.orderLink || '',
+              orderButtonText: directSettings.orderButtonText || 'Commander'
+            })
+          }
+        } catch (directError) {
+          console.log('Pas de settings directs trouvés')
+        }
       }
     } catch (error) {
       console.error('Error loading settings:', error)
@@ -35,21 +54,32 @@ const AdminOrderSettings = () => {
     setSaving(true)
 
     try {
-      // Sauvegarder directement via l'API
-      const response = await fetch('https://thegd33.calitek-junior.workers.dev/api/settings', {
+      console.log('Sauvegarde des paramètres:', settings)
+      
+      const API_URL = import.meta.env.VITE_API_URL || 'https://calitekv3.calitek-junior.workers.dev'
+      
+      // Essayer directement avec fetch
+      const response = await fetch(`${API_URL}/api/settings`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          key: 'orderSettings',
           orderLink: settings.orderLink,
           orderButtonText: settings.orderButtonText
         })
       })
       
       if (!response.ok) {
-        throw new Error('Erreur API')
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`)
       }
       
+      const result = await response.json()
+      console.log('Résultat de la sauvegarde:', result)
+      
       alert('✅ Paramètres de commande enregistrés avec succès !')
+      
+      // Recharger les paramètres pour vérifier
+      await loadSettings()
     } catch (error) {
       console.error('Error saving settings:', error)
       alert('❌ Erreur lors de la sauvegarde: ' + error.message)
@@ -142,6 +172,25 @@ const AdminOrderSettings = () => {
             className="flex-1 py-4 bg-white text-black rounded-lg font-bold hover:bg-gray-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {saving ? 'Enregistrement...' : '💾 Enregistrer'}
+          </button>
+          <button
+            type="button"
+            onClick={async () => {
+              console.log('Test de l\'API...')
+              try {
+                const API_URL = import.meta.env.VITE_API_URL || 'https://calitekv3.calitek-junior.workers.dev'
+                const response = await fetch(`${API_URL}/api/settings`)
+                const data = await response.json()
+                console.log('Test API settings:', data)
+                alert('Test API: ' + JSON.stringify(data, null, 2))
+              } catch (error) {
+                console.error('Erreur test API:', error)
+                alert('Erreur test API: ' + error.message)
+              }
+            }}
+            className="px-4 py-4 bg-blue-500 text-white rounded-lg font-bold hover:bg-blue-600 transition-all"
+          >
+            🧪 Test API
           </button>
         </div>
       </form>

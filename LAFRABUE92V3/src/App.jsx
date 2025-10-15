@@ -14,6 +14,7 @@ import AdminSettings from './pages/admin/Settings'
 import AdminFarms from './pages/admin/Farms'
 import AdminTypography from './pages/admin/Typography'
 import AdminOrderSettings from './pages/admin/OrderSettings'
+import AdminOrders from './pages/admin/Orders'
 import AdminUsers from './pages/admin/AdminUsers'
 import AdminMaintenance from './pages/admin/Maintenance'
 import AdminLayout from './components/admin/AdminLayout'
@@ -64,6 +65,7 @@ function App() {
             <Route path="farms" element={<AdminFarms />} />
             <Route path="typography" element={<AdminTypography />} />
             <Route path="order-settings" element={<AdminOrderSettings />} />
+            <Route path="orders" element={<AdminOrders />} />
             <Route path="users" element={<AdminUsers />} />
             <Route path="maintenance" element={<AdminMaintenance />} />
             <Route path="settings" element={<AdminSettings />} />

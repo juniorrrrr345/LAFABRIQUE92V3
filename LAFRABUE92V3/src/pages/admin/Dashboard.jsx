@@ -17,7 +17,7 @@ const Dashboard = () => {
       </motion.div>
 
       {/* Navigation rapide */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         <Link to="/admin/products">
           <motion.div
             whileHover={{ scale: 1.05 }}
@@ -48,6 +48,17 @@ const Dashboard = () => {
             <div className="text-5xl mb-3">🌾</div>
             <h3 className="text-white font-bold text-lg">Farms</h3>
             <p className="text-gray-400 text-sm">Gérer vos farms</p>
+          </motion.div>
+        </Link>
+
+        <Link to="/admin/orders">
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            className="neon-border rounded-xl p-6 bg-slate-900/50 backdrop-blur-sm hover:bg-slate-900/70 transition-all cursor-pointer"
+          >
+            <div className="text-5xl mb-3">🛒</div>
+            <h3 className="text-white font-bold text-lg">Commandes</h3>
+            <p className="text-gray-400 text-sm">Gérer les commandes</p>
           </motion.div>
         </Link>
 

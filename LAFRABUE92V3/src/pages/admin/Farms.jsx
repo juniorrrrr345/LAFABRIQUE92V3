@@ -77,20 +77,20 @@ const AdminFarms = () => {
             key={farm.id}
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="border border-gray-700 rounded-xl p-4 bg-black/50 hover:bg-black/70 transition-colors"
+            className="neon-border rounded-xl p-4 bg-slate-900/50 backdrop-blur-sm hover:bg-slate-900/70 transition-colors"
           >
             <h3 className="text-lg font-bold text-white mb-3">🌾 {farm.name}</h3>
             
             <div className="flex gap-2">
               <button
                 onClick={() => handleEdit(farm)}
-                className="flex-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white hover:bg-gray-600 transition-colors text-sm"
+                className="flex-1 px-3 py-2 bg-gray-700/20 border border-gray-600/50 rounded-lg text-gray-300 hover:bg-gray-600/30 transition-colors text-sm"
               >
                 ✏️ Modifier
               </button>
               <button
                 onClick={() => handleDelete(farm.id)}
-                className="flex-1 px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-gray-400 hover:bg-gray-700 transition-colors text-sm"
+                className="flex-1 px-3 py-2 bg-gray-800/20 border border-gray-600/50 rounded-lg text-gray-400 hover:bg-gray-700/30 transition-colors text-sm"
               >
                 🗑️ Supprimer
               </button>
@@ -152,10 +152,10 @@ const FarmModal = ({ farm, onClose, onSuccess }) => {
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
-        className="border border-gray-700 rounded-2xl p-6 bg-black max-w-md w-full"
+        className="neon-border rounded-2xl p-6 bg-slate-900 max-w-md w-full"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="text-2xl font-bold text-white mb-6">
+        <h2 className="text-2xl font-bold text-gradient mb-6">
           {farm ? '✏️ Modifier la farm' : '➕ Ajouter une farm'}
         </h2>
 
@@ -168,7 +168,7 @@ const FarmModal = ({ farm, onClose, onSuccess }) => {
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               required
               placeholder="Ex: Farm du Nord"
-              className="w-full px-4 py-3 bg-black border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gray-500 transition-colors"
+              className="w-full px-4 py-3 bg-slate-800 border border-gray-700/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-white transition-colors"
             />
           </div>
 
@@ -183,7 +183,7 @@ const FarmModal = ({ farm, onClose, onSuccess }) => {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white font-semibold hover:bg-gray-700 transition-colors"
+              className="flex-1 py-3 bg-slate-800 border border-gray-700/30 rounded-lg text-white font-semibold hover:bg-slate-700 transition-colors"
             >
               Annuler
             </button>
