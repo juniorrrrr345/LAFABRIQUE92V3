@@ -20,9 +20,11 @@ const AdminOrderSettings = () => {
       // Chercher l'entrée orderSettings
       const orderData = data.find(s => s.key === 'orderSettings')
       if (orderData) {
+        // Si orderData.value existe, c'est un objet parsé, sinon c'est l'ancien format
+        const settingsData = orderData.value || orderData
         setSettings({
-          orderLink: orderData.orderLink || '',
-          orderButtonText: orderData.orderButtonText || 'Commander'
+          orderLink: settingsData.orderLink || '',
+          orderButtonText: settingsData.orderButtonText || 'Commander'
         })
       }
     } catch (error) {
@@ -37,13 +39,15 @@ const AdminOrderSettings = () => {
     setSaving(true)
 
     try {
-      // Sauvegarder via l'API
-      await save('settings', {
+      // Sauvegarder via l'API avec la structure correcte
+      const settingsData = {
         key: 'orderSettings',
         orderLink: settings.orderLink,
         orderButtonText: settings.orderButtonText,
         updatedAt: new Date().toISOString()
-      })
+      }
+      
+      await save('settings', settingsData)
       
       alert('✅ Paramètres de commande enregistrés avec succès !')
     } catch (error) {
