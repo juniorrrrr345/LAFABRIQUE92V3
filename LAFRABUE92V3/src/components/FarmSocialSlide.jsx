@@ -105,7 +105,9 @@ const FarmSocialSlide = ({ isOpen, onClose, onConfirm, productData, contentType 
   }
 
   const generateSocialMessage = (social) => {
-    const baseMessage = customMessage
+    // Nettoyer le message personnalisé
+    const cleanCustomMessage = customMessage.replace(/^[ds]\s*$/gm, '').trim()
+    const baseMessage = cleanCustomMessage || generateDefaultMessage(contentType, productData)
     const socialName = social.name.toLowerCase()
     
     // Générer des hashtags selon le type de contenu
@@ -131,13 +133,14 @@ const FarmSocialSlide = ({ isOpen, onClose, onConfirm, productData, contentType 
     } else if (socialName.includes('twitter') || socialName.includes('x')) {
       return `${baseMessage}\n\n${getHashtags()}`
     } else if (socialName.includes('whatsapp')) {
+      const cleanProductName = (productData?.name || '').replace(/^[ds]\s*$/, '').trim() || (contentType === 'product' ? 'Produit' : contentType === 'farm' ? 'Ferme' : contentType === 'category' ? 'Catégorie' : 'Réseau')
       const shortMessage = contentType === 'product' 
-        ? `🛍️ Nouveau produit disponible !\n\n${productData?.name || 'Produit'}\n\nCommandez maintenant ! 🛒`
+        ? `🛍️ Nouveau produit disponible !\n\n${cleanProductName}\n\nCommandez maintenant ! 🛒`
         : contentType === 'farm'
-        ? `🌾 Nouvelle ferme ajoutée !\n\n${productData?.name || 'Ferme'}\n\nDécouvrez nos producteurs ! 🚜`
+        ? `🌾 Nouvelle ferme ajoutée !\n\n${cleanProductName}\n\nDécouvrez nos producteurs ! 🚜`
         : contentType === 'category'
-        ? `📂 Nouvelle catégorie !\n\n${productData?.name || 'Catégorie'}\n\nExplorez nos produits ! 🛍️`
-        : `📱 Nouveau réseau social !\n\n${productData?.name || 'Réseau'}\n\nSuivez-nous ! 👥`
+        ? `📂 Nouvelle catégorie !\n\n${cleanProductName}\n\nExplorez nos produits ! 🛍️`
+        : `📱 Nouveau réseau social !\n\n${cleanProductName}\n\nSuivez-nous ! 👥`
       return shortMessage
     }
     
