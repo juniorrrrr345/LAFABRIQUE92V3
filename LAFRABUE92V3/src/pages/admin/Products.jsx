@@ -690,34 +690,60 @@ const ProductModal = ({ product, onClose, onSuccess }) => {
               </button>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-4">
               {variants.map((variant, index) => (
-                <div key={index} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 bg-slate-800/50 p-3 rounded-lg">
-                  <input
-                    type="text"
-                    placeholder="5g"
-                    value={variant.name}
-                    onChange={(e) => updateVariant(index, 'name', e.target.value)}
-                    className="w-full sm:flex-1 px-3 py-2 bg-slate-800 border border-gray-700/30 rounded text-white focus:outline-none focus:border-white"
-                    required
-                  />
-                  <input
-                    type="text"
-                    placeholder="20€"
-                    value={variant.price}
-                    onChange={(e) => updateVariant(index, 'price', e.target.value)}
-                    className="w-full sm:flex-1 px-3 py-2 bg-slate-800 border border-gray-700/30 rounded text-white focus:outline-none focus:border-white"
-                    required
-                  />
-                  {variants.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => removeVariant(index)}
-                      className="w-full sm:w-auto px-3 py-2 bg-gray-800/20 text-gray-400 rounded hover:bg-gray-700/30 flex items-center justify-center"
-                    >
-                      🗑️
-                    </button>
-                  )}
+                <div key={index} className="bg-slate-800/50 p-4 rounded-lg">
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-4">
+                    <input
+                      type="text"
+                      placeholder="5g"
+                      value={variant.name}
+                      onChange={(e) => updateVariant(index, 'name', e.target.value)}
+                      className="w-full sm:flex-1 px-3 py-2 bg-slate-800 border border-gray-700/30 rounded text-white focus:outline-none focus:border-white"
+                      required
+                    />
+                    <input
+                      type="text"
+                      placeholder="20€"
+                      value={variant.price}
+                      onChange={(e) => updateVariant(index, 'price', e.target.value)}
+                      className="w-full sm:flex-1 px-3 py-2 bg-slate-800 border border-gray-700/30 rounded text-white focus:outline-none focus:border-white"
+                      required
+                    />
+                    {variants.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeVariant(index)}
+                        className="w-full sm:w-auto px-3 py-2 bg-gray-800/20 text-gray-400 rounded hover:bg-gray-700/30 flex items-center justify-center"
+                      >
+                        🗑️
+                      </button>
+                    )}
+                  </div>
+                  
+                  {/* Slider pour le prix */}
+                  <div className="space-y-2">
+                    <label className="block text-gray-300 text-sm">Ajuster le prix avec le slider</label>
+                    <div className="relative">
+                      <input
+                        type="range"
+                        min="0"
+                        max="1000"
+                        step="1"
+                        value={parseFloat(variant.price) || 0}
+                        onChange={(e) => updateVariant(index, 'price', e.target.value + '€')}
+                        className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer slider"
+                        style={{
+                          background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${(parseFloat(variant.price) || 0) / 10}%, #374151 ${(parseFloat(variant.price) || 0) / 10}%, #374151 100%)`
+                        }}
+                      />
+                      <div className="flex justify-between text-xs text-gray-400 mt-1">
+                        <span>0€</span>
+                        <span className="text-white font-semibold">{variant.price || '0€'}</span>
+                        <span>1000€</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
