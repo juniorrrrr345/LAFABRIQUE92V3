@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import Footer from '../components/Footer'
+import ImageGallery from '../components/ImageGallery'
 
 const ProductDetail = () => {
   const { id } = useParams()

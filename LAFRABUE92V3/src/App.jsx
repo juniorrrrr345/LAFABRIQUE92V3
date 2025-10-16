@@ -22,6 +22,8 @@ import MaintenanceMode from './components/MaintenanceMode'
 import LoadingPage from './components/LoadingPage'
 import { ThemeProvider } from './components/ThemeProvider'
 import { LoadingProvider, useLoading } from './contexts/LoadingContext'
+import { ThemeProvider as ThemeContextProvider } from './contexts/ThemeContext'
+import ThemeToggle from './components/ThemeToggle'
 
 const AppContent = () => {
   const { isLoading } = useLoading()
@@ -59,6 +61,7 @@ const AppContent = () => {
   return (
     <Router>
       <DynamicBackground />
+      <ThemeToggle />
       <MaintenanceMode>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -91,7 +94,9 @@ function App() {
   return (
     <LoadingProvider>
       <ThemeProvider>
-        <AppContent />
+        <ThemeContextProvider>
+          <AppContent />
+        </ThemeContextProvider>
       </ThemeProvider>
     </LoadingProvider>
   )
