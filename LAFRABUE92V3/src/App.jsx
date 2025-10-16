@@ -55,7 +55,7 @@ const AppContent = () => {
   }, [])
 
   if (isLoading) {
-    return <LoadingPage />
+    return <GrinderGifLoader />
   }
 
   return (

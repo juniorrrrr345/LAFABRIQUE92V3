@@ -13,7 +13,9 @@ export default function GrinderGifLoader() {
         <h1 className="text-3xl font-bold mb-4 drop-shadow-[0_0_15px_rgba(0,255,120,0.7)]">
           Préparation du menu...
         </h1>
-        <p className="text-lime-200/80 text-sm">Veuillez patienter, le menu charge 🌿</p>
+        <div className="bg-black/80 backdrop-blur-sm rounded-lg px-6 py-3 inline-block">
+          <p className="text-white text-sm font-medium">Veuillez patienter, le menu charge 🌿</p>
+        </div>
       </div>
     </div>
   );
