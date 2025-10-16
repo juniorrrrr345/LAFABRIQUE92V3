@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import Footer from '../components/Footer'
+import GrinderGifLoader from '../components/GrinderGifLoader'
 
 const Products = () => {
   const [searchParams] = useSearchParams()
@@ -9,7 +10,7 @@ const Products = () => {
   const [allProducts, setAllProducts] = useState([])
   const [categories, setCategories] = useState([])
   const [farms, setFarms] = useState([])
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('')
   const [selectedFarm, setSelectedFarm] = useState('')
@@ -41,7 +42,9 @@ const Products = () => {
     try {
       const { getAll } = await import('../utils/api')
       
-      // Chargement direct sans animation ni délai
+      // Chargement avec un petit délai pour voir le GIF
+      await new Promise(resolve => setTimeout(resolve, 1500))
+      
       const [productsData, categoriesData, farmsData] = await Promise.all([
         getAll('products'),
         getAll('categories'),
@@ -55,6 +58,8 @@ const Products = () => {
     } catch (error) {
       console.error('Erreur lors du chargement des produits:', error)
       setProducts([])
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -88,7 +93,9 @@ const Products = () => {
     setSelectedFarm('')
   }
 
-  // Pas de chargement - affichage direct
+  if (loading) {
+    return <GrinderGifLoader />
+  }
 
   return (
     <div className="min-h-screen cosmic-bg">

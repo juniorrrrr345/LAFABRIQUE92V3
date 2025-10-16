@@ -11,16 +11,20 @@ export const useLoading = () => {
 }
 
 export const LoadingProvider = ({ children }) => {
-  const [isLoading, setIsLoading] = useState(false) // Désactivé par défaut
+  const [isLoading, setIsLoading] = useState(true) // Activé au démarrage
   const [loadingMessage, setLoadingMessage] = useState('Chargement de votre boutique...')
   const [loadingProgress, setLoadingProgress] = useState(0)
-  const [hasLoadedOnce, setHasLoadedOnce] = useState(true) // Déjà chargé
+  const [hasLoadedOnce, setHasLoadedOnce] = useState(false)
 
-  // Chargement initial désactivé
+  // Chargement initial avec le GIF
   useEffect(() => {
-    // Ne rien faire - pas de chargement au démarrage
-    setIsLoading(false)
-    setHasLoadedOnce(true)
+    // Simuler un temps de chargement pour voir le GIF
+    const timer = setTimeout(() => {
+      setIsLoading(false)
+      setHasLoadedOnce(true)
+    }, 3000) // 3 secondes pour voir le GIF
+
+    return () => clearTimeout(timer)
   }, [])
 
   const startLoading = (message = 'Chargement...') => {
