@@ -19,9 +19,11 @@ import AdminMaintenance from './pages/admin/Maintenance'
 import AdminLayout from './components/admin/AdminLayout'
 import DynamicBackground from './components/DynamicBackground'
 import MaintenanceMode from './components/MaintenanceMode'
-import LoadingPage from './components/LoadingPage'
+import GrinderGifLoader from './components/GrinderGifLoader'
 import { ThemeProvider } from './components/ThemeProvider'
 import { LoadingProvider, useLoading } from './contexts/LoadingContext'
+import { ThemeProvider as ThemeContextProvider } from './contexts/ThemeContext'
+import ThemeToggle from './components/ThemeToggle'
 
 const AppContent = () => {
   const { isLoading } = useLoading()
@@ -53,12 +55,13 @@ const AppContent = () => {
   }, [])
 
   if (isLoading) {
-    return <LoadingPage />
+    return <GrinderGifLoader />
   }
 
   return (
     <Router>
       <DynamicBackground />
+      <ThemeToggle />
       <MaintenanceMode>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -91,7 +94,9 @@ function App() {
   return (
     <LoadingProvider>
       <ThemeProvider>
-        <AppContent />
+        <ThemeContextProvider>
+          <AppContent />
+        </ThemeContextProvider>
       </ThemeProvider>
     </LoadingProvider>
   )

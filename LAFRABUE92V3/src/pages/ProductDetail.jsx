@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import Footer from '../components/Footer'
+import ImageGallery from '../components/ImageGallery'
 
 const ProductDetail = () => {
   const { id } = useParams()
@@ -45,8 +46,7 @@ const ProductDetail = () => {
     return (
       <div className="min-h-screen cosmic-bg flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-white mx-auto mb-4"></div>
-          <p className="text-white text-lg">Chargement...</p>
+          <p className="text-white text-lg">Produit non trouvé</p>
         </div>
       </div>
     )
@@ -156,99 +156,9 @@ const ProductDetail = () => {
               animate={{ opacity: 1, x: 0 }}
               className="space-y-4"
             >
-              {/* Média Principal */}
-              <div className="neon-border rounded-2xl overflow-hidden bg-slate-900/50 backdrop-blur-sm aspect-square sm:aspect-square">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={selectedMedia}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="w-full h-full relative z-10"
-                  >
-                    {currentMedia ? (
-                      isCloudflareStreamIframe(currentMedia) ? (
-                        <iframe
-                          src={currentMedia}
-                          className="w-full h-full"
-                          allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
-                          allowFullScreen
-                          style={{ border: 'none' }}
-                        />
-                      ) : isVideo(currentMedia) ? (
-                        <video
-                          src={currentMedia}
-                          className="w-full h-full object-cover"
-                          controls
-                          autoPlay
-                          loop
-                          muted
-                          onError={(e) => console.error('Erreur vidéo détail:', currentMedia, e)}
-                          onLoadStart={() => console.log('Chargement vidéo détail:', currentMedia)}
-                        />
-                      ) : (
-                        <img
-                          src={currentMedia}
-                          alt={product.name}
-                          className="w-full h-full object-cover"
-                          onError={(e) => console.error('Erreur image détail:', currentMedia, e)}
-                          onLoad={() => console.log('Image détail chargée:', currentMedia)}
-                        />
-                      )
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-9xl">
-                        🎁
-                      </div>
-                    )}
-                  </motion.div>
-                </AnimatePresence>
+              <div className="neon-border rounded-2xl overflow-hidden bg-slate-900/50 backdrop-blur-sm aspect-square">
+                <ImageGallery medias={medias} productName={product.name} />
               </div>
-
-              {/* Miniatures */}
-              {Array.isArray(medias) && medias.length > 1 && (
-                <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-4">
-                  {medias.map((media, index) => (
-                    <motion.div
-                      key={index}
-                      whileHover={{ scale: 1.05 }}
-                      onClick={() => setSelectedMedia(index)}
-                      className={`aspect-square rounded-lg overflow-hidden cursor-pointer border-2 transition-all ${
-                        selectedMedia === index
-                          ? 'border-white shadow-lg shadow-pink-500/50'
-                          : 'border-gray-700/30 hover:border-white/50'
-                      }`}
-                    >
-                      {isCloudflareStreamIframe(media) ? (
-                        <div className="w-full h-full bg-slate-800 flex items-center justify-center text-2xl">
-                          🎥
-                        </div>
-                      ) : isVideo(media) ? (
-                        <video 
-                          src={media} 
-                          className="w-full h-full object-cover" 
-                          muted 
-                          onError={(e) => console.error('Erreur vidéo miniature:', media, e)}
-                        />
-                      ) : (
-                        <img 
-                          src={media} 
-                          alt={`${product.name} ${index + 1}`} 
-                          className="w-full h-full object-cover"
-                          onError={(e) => console.error('Erreur image miniature:', media, e)}
-                        />
-                      )}
-                    </motion.div>
-                  ))}
-                </div>
-              )}
-              
-              {/* Debug info */}
-              {medias.length === 0 && (
-                <div className="text-center p-4 bg-red-900/20 border border-red-500/50 rounded-lg">
-                  <p className="text-red-400 text-sm">Aucun média trouvé pour ce produit</p>
-                  <p className="text-gray-500 text-xs mt-1">Vérifiez la console pour plus de détails</p>
-                </div>
-              )}
             </motion.div>
 
             {/* Informations Produit */}

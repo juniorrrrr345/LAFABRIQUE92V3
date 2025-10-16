@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import Footer from '../components/Footer'
-import ProductLoading from '../components/ProductLoading'
+import GrinderGifLoader from '../components/GrinderGifLoader'
 
 const Products = () => {
   const [searchParams] = useSearchParams()
@@ -10,14 +10,12 @@ const Products = () => {
   const [allProducts, setAllProducts] = useState([])
   const [categories, setCategories] = useState([])
   const [farms, setFarms] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('')
   const [selectedFarm, setSelectedFarm] = useState('')
   const [showFilters, setShowFilters] = useState(false)
   const [previewProduct, setPreviewProduct] = useState(null)
-  const [loadingMessage, setLoadingMessage] = useState('Chargement des produits...')
-  const [loadingProgress, setLoadingProgress] = useState(0)
 
   useEffect(() => {
     fetchData()
@@ -42,38 +40,22 @@ const Products = () => {
 
   const fetchData = async () => {
     try {
-      setLoadingMessage('Récupération des données...')
-      setLoadingProgress(20)
-      
       const { getAll } = await import('../utils/api')
       
-      setLoadingMessage('Chargement des produits...')
-      setLoadingProgress(40)
-      const productsData = await getAll('products')
+      // Chargement direct sans délai
+      const [productsData, categoriesData, farmsData] = await Promise.all([
+        getAll('products'),
+        getAll('categories'),
+        getAll('farms')
+      ])
       
-      setLoadingMessage('Chargement des catégories...')
-      setLoadingProgress(60)
-      const categoriesData = await getAll('categories')
-      
-      setLoadingMessage('Chargement des fermes...')
-      setLoadingProgress(80)
-      const farmsData = await getAll('farms')
-      
-      setLoadingMessage('Finalisation...')
-      setLoadingProgress(90)
       setAllProducts(productsData)
       setProducts(productsData)
       setCategories(categoriesData)
       setFarms(farmsData)
-      
-      setLoadingMessage('Terminé!')
-      setLoadingProgress(100)
-      await new Promise(resolve => setTimeout(resolve, 500))
     } catch (error) {
       console.error('Erreur lors du chargement des produits:', error)
       setProducts([])
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -107,9 +89,7 @@ const Products = () => {
     setSelectedFarm('')
   }
 
-  if (loading) {
-    return <ProductLoading message={loadingMessage} progress={loadingProgress} />
-  }
+  // Pas de chargement sur la page produits
 
   return (
     <div className="min-h-screen cosmic-bg">
@@ -296,11 +276,18 @@ const ProductCard = ({ product, index, onPreview, categories, farms }) => {
   
   return (
     <motion.div
-      initial={{ opacity: 0, y: 50 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.05 }}
-      whileHover={{ scale: 1.05 }}
-      className="neon-border rounded-2xl overflow-hidden bg-slate-900/50 backdrop-blur-sm group cursor-pointer"
+      initial={{ opacity: 0, y: 30, scale: 0.9 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ 
+        delay: index * 0.08,
+        duration: 0.5,
+        ease: [0.43, 0.13, 0.23, 0.96]
+      }}
+      whileHover={{ 
+        scale: 1.05,
+        transition: { duration: 0.2, ease: "easeOut" }
+      }}
+      className="neon-border rounded-2xl overflow-hidden bg-slate-900/50 backdrop-blur-sm group cursor-pointer transform-gpu"
     >
       {/* Image ou Vidéo */}
       <div className="relative h-32 sm:h-48 md:h-64 lg:h-72 overflow-hidden bg-slate-800" onClick={onPreview}>
@@ -328,18 +315,33 @@ const ProductCard = ({ product, index, onPreview, categories, farms }) => {
             <img
               src={displayImage}
               alt={product.name}
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              className="w-full h-full object-cover transform transition-all duration-700 group-hover:scale-110 group-hover:rotate-1"
               onError={(e) => console.error('Erreur image:', displayImage, e)}
               onLoad={() => console.log('Image chargée:', displayImage)}
             />
           )
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-6xl">
+          <div className="w-full h-full flex items-center justify-center text-6xl transform transition-all duration-500 group-hover:scale-125 group-hover:rotate-12">
             🎁
           </div>
         )}
-        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-          <span className="text-theme-heading text-lg font-bold">👁️ Aperçu rapide</span>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end p-4">
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            whileHover={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.3 }}
+            className="w-full"
+          >
+            <span className="text-white text-lg font-bold flex items-center justify-center gap-2">
+              <motion.span
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ duration: 1, repeat: Infinity }}
+              >
+                👁️
+              </motion.span>
+              Aperçu rapide
+            </span>
+          </motion.div>
         </div>
       </div>
 
@@ -373,9 +375,13 @@ const ProductCard = ({ product, index, onPreview, categories, farms }) => {
             </p>
           )}
           <Link to={`/products/${product.id}`} className="ml-auto">
-            <button className="px-2 sm:px-3 lg:px-4 py-1 sm:py-2 bg-gradient-to-r from-white to-gray-200 rounded-lg text-black font-semibold hover:from-gray-200 hover:to-gray-400 transition-all text-xs sm:text-sm">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="px-2 sm:px-3 lg:px-4 py-1 sm:py-2 bg-gradient-to-r from-white to-gray-200 rounded-lg text-black font-semibold hover:from-purple-400 hover:to-pink-400 hover:text-white transition-all duration-300 text-xs sm:text-sm shadow-md hover:shadow-xl"
+            >
               Voir
-            </button>
+            </motion.button>
           </Link>
         </div>
       </div>
