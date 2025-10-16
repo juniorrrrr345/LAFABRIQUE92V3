@@ -159,38 +159,6 @@ const ProductDetail = () => {
               <div className="neon-border rounded-2xl overflow-hidden bg-slate-900/50 backdrop-blur-sm aspect-square">
                 <ImageGallery medias={medias} productName={product.name} />
               </div>
-                    >
-                      {isCloudflareStreamIframe(media) ? (
-                        <div className="w-full h-full bg-slate-800 flex items-center justify-center text-2xl">
-                          🎥
-                        </div>
-                      ) : isVideo(media) ? (
-                        <video 
-                          src={media} 
-                          className="w-full h-full object-cover" 
-                          muted 
-                          onError={(e) => console.error('Erreur vidéo miniature:', media, e)}
-                        />
-                      ) : (
-                        <img 
-                          src={media} 
-                          alt={`${product.name} ${index + 1}`} 
-                          className="w-full h-full object-cover"
-                          onError={(e) => console.error('Erreur image miniature:', media, e)}
-                        />
-                      )}
-                    </motion.div>
-                  ))}
-                </div>
-              )}
-              
-              {/* Debug info */}
-              {medias.length === 0 && (
-                <div className="text-center p-4 bg-red-900/20 border border-red-500/50 rounded-lg">
-                  <p className="text-red-400 text-sm">Aucun média trouvé pour ce produit</p>
-                  <p className="text-gray-500 text-xs mt-1">Vérifiez la console pour plus de détails</p>
-                </div>
-              )}
             </motion.div>
 
             {/* Informations Produit */}
