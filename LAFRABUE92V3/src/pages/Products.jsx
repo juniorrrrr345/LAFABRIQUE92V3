@@ -10,7 +10,7 @@ const Products = () => {
   const [allProducts, setAllProducts] = useState([])
   const [categories, setCategories] = useState([])
   const [farms, setFarms] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('')
   const [selectedFarm, setSelectedFarm] = useState('')
@@ -42,9 +42,7 @@ const Products = () => {
     try {
       const { getAll } = await import('../utils/api')
       
-      // Chargement avec un petit délai pour voir le GIF
-      await new Promise(resolve => setTimeout(resolve, 1500))
-      
+      // Chargement direct sans délai
       const [productsData, categoriesData, farmsData] = await Promise.all([
         getAll('products'),
         getAll('categories'),
@@ -58,8 +56,6 @@ const Products = () => {
     } catch (error) {
       console.error('Erreur lors du chargement des produits:', error)
       setProducts([])
-    } finally {
-      setLoading(false)
     }
   }
 
