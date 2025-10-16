@@ -89,9 +89,7 @@ const Products = () => {
     setSelectedFarm('')
   }
 
-  if (loading) {
-    return <GrinderGifLoader />
-  }
+  // Pas de chargement sur la page produits
 
   return (
     <div className="min-h-screen cosmic-bg">
