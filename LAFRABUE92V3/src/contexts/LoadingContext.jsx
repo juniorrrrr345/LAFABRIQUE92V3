@@ -11,52 +11,16 @@ export const useLoading = () => {
 }
 
 export const LoadingProvider = ({ children }) => {
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
   const [loadingMessage, setLoadingMessage] = useState('Chargement de votre boutique...')
   const [loadingProgress, setLoadingProgress] = useState(0)
-  const [hasLoadedOnce, setHasLoadedOnce] = useState(false)
+  const [hasLoadedOnce, setHasLoadedOnce] = useState(true)
 
-  // Simulation du chargement initial de l'application
+  // Chargement initial désactivé - accès direct à la boutique
   useEffect(() => {
-    const loadApp = async () => {
-      try {
-        setLoadingMessage('🚀 Initialisation de votre boutique...')
-        setLoadingProgress(15)
-        await new Promise(resolve => setTimeout(resolve, 600))
-
-        setLoadingMessage('✨ Chargement des produits premium...')
-        setLoadingProgress(30)
-        await new Promise(resolve => setTimeout(resolve, 700))
-
-        setLoadingMessage('🎨 Application de votre thème personnalisé...')
-        setLoadingProgress(50)
-        await new Promise(resolve => setTimeout(resolve, 600))
-
-        setLoadingMessage('🛍️ Préparation de votre expérience shopping...')
-        setLoadingProgress(70)
-        await new Promise(resolve => setTimeout(resolve, 500))
-
-        setLoadingMessage('💎 Optimisation des performances...')
-        setLoadingProgress(85)
-        await new Promise(resolve => setTimeout(resolve, 400))
-
-        setLoadingMessage('🎉 Presque prêt...')
-        setLoadingProgress(95)
-        await new Promise(resolve => setTimeout(resolve, 300))
-
-        setLoadingProgress(100)
-        await new Promise(resolve => setTimeout(resolve, 200))
-        
-        setIsLoading(false)
-        setHasLoadedOnce(true)
-      } catch (error) {
-        console.error('Erreur lors du chargement:', error)
-        setIsLoading(false)
-        setHasLoadedOnce(true)
-      }
-    }
-
-    loadApp()
+    // Le chargement initial est désactivé pour un accès immédiat
+    setIsLoading(false)
+    setHasLoadedOnce(true)
   }, [])
 
   const startLoading = (message = 'Chargement...') => {
