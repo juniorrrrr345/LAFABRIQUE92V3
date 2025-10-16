@@ -11,59 +11,12 @@ export const useLoading = () => {
 }
 
 export const LoadingProvider = ({ children }) => {
-  const [isLoading, setIsLoading] = useState(true)
-  const [loadingMessage, setLoadingMessage] = useState('Chargement de votre boutique...')
+  const [isLoading, setIsLoading] = useState(false)
+  const [loadingMessage, setLoadingMessage] = useState('Chargement...')
   const [loadingProgress, setLoadingProgress] = useState(0)
-  const [hasLoadedOnce, setHasLoadedOnce] = useState(false)
-
-  // Simulation du chargement initial de l'application
-  useEffect(() => {
-    const loadApp = async () => {
-      try {
-        setLoadingMessage('🚀 Initialisation de votre boutique...')
-        setLoadingProgress(15)
-        await new Promise(resolve => setTimeout(resolve, 600))
-
-        setLoadingMessage('✨ Chargement des produits premium...')
-        setLoadingProgress(30)
-        await new Promise(resolve => setTimeout(resolve, 700))
-
-        setLoadingMessage('🎨 Application de votre thème personnalisé...')
-        setLoadingProgress(50)
-        await new Promise(resolve => setTimeout(resolve, 600))
-
-        setLoadingMessage('🛍️ Préparation de votre expérience shopping...')
-        setLoadingProgress(70)
-        await new Promise(resolve => setTimeout(resolve, 500))
-
-        setLoadingMessage('💎 Optimisation des performances...')
-        setLoadingProgress(85)
-        await new Promise(resolve => setTimeout(resolve, 400))
-
-        setLoadingMessage('🎉 Presque prêt...')
-        setLoadingProgress(95)
-        await new Promise(resolve => setTimeout(resolve, 300))
-
-        setLoadingProgress(100)
-        await new Promise(resolve => setTimeout(resolve, 200))
-        
-        setIsLoading(false)
-        setHasLoadedOnce(true)
-      } catch (error) {
-        console.error('Erreur lors du chargement:', error)
-        setIsLoading(false)
-        setHasLoadedOnce(true)
-      }
-    }
-
-    loadApp()
-  }, [])
+  const [hasLoadedOnce, setHasLoadedOnce] = useState(true)
 
   const startLoading = (message = 'Chargement...') => {
-    // Ne pas afficher le chargement global si l'app a déjà été chargée une fois
-    if (hasLoadedOnce) {
-      return
-    }
     setIsLoading(true)
     setLoadingMessage(message)
     setLoadingProgress(0)
@@ -82,7 +35,7 @@ export const LoadingProvider = ({ children }) => {
   }
 
   const value = {
-    isLoading: hasLoadedOnce ? false : isLoading,
+    isLoading,
     loadingMessage,
     loadingProgress,
     startLoading,

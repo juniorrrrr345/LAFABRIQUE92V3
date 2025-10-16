@@ -19,13 +19,10 @@ import AdminMaintenance from './pages/admin/Maintenance'
 import AdminLayout from './components/admin/AdminLayout'
 import DynamicBackground from './components/DynamicBackground'
 import MaintenanceMode from './components/MaintenanceMode'
-import LoadingPage from './components/LoadingPage'
 import { ThemeProvider } from './components/ThemeProvider'
-import { LoadingProvider, useLoading } from './contexts/LoadingContext'
+import { LoadingProvider } from './contexts/LoadingContext'
 
 const AppContent = () => {
-  const { isLoading } = useLoading()
-
   // Charger le nom de la boutique pour le titre du navigateur
   useEffect(() => {
     const updateTitle = async () => {
@@ -51,10 +48,6 @@ const AppContent = () => {
   useEffect(() => {
     document.documentElement.style.setProperty('--title-font', "'Playfair Display'")
   }, [])
-
-  if (isLoading) {
-    return <LoadingPage />
-  }
 
   return (
     <Router>
