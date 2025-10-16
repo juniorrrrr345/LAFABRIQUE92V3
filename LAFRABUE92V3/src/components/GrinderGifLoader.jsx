@@ -5,14 +5,10 @@ export default function GrinderGifLoader() {
   return (
     <div className="fixed inset-0 w-full h-screen bg-black overflow-hidden">
       {/* GIF en plein écran */}
-      <div 
-        className="absolute inset-0 w-full h-full"
-        style={{
-          backgroundImage: `url('https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExbng0ZHk5MWs0dG95bWhhc3VzZHp2YTd5Ym5rdGY1NTl5cTZ0aXp4NiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/R66d5xrLScxeEUJYer/giphy.gif')`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat'
-        }}
+      <img 
+        src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExbng0ZHk5MWs0dG95bWhhc3VzZHp2YTd5Ym5rdGY1NTl5cTZ0aXp4NiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/R66d5xrLScxeEUJYer/giphy.gif"
+        alt="Loading..."
+        className="absolute inset-0 w-full h-full object-cover"
       />
       
       {/* Overlay sombre pour améliorer la lisibilité du texte */}
