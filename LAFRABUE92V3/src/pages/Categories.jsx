@@ -5,7 +5,7 @@ import Footer from '../components/Footer'
 
 const Categories = () => {
   const [categories, setCategories] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [productCounts, setProductCounts] = useState({})
 
   useEffect(() => {
@@ -27,8 +27,6 @@ const Categories = () => {
         setProductCounts(counts)
       } catch (error) {
         console.error('Erreur lors du chargement des catégories:', error)
-      } finally {
-        setLoading(false)
       }
     }
     fetchData()
