@@ -41,16 +41,7 @@ const Categories = () => {
     'from-white to-gray-300'
   ]
 
-  if (loading) {
-    return (
-      <div className="min-h-screen cosmic-bg flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-white mx-auto mb-4"></div>
-          <p className="text-theme text-lg">Chargement...</p>
-        </div>
-      </div>
-    )
-  }
+  // Pas de chargement - affichage direct
 
   return (
     <div className="min-h-screen cosmic-bg">

@@ -6,7 +6,7 @@ const MaintenanceMode = ({ children }) => {
   const [maintenanceMode, setMaintenanceMode] = useState(false)
   const [maintenanceMessage, setMaintenanceMessage] = useState('')
   const [backgroundImage, setBackgroundImage] = useState('')
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const location = useLocation()
 
   // Vérifier si on est dans le panel admin
@@ -23,22 +23,13 @@ const MaintenanceMode = ({ children }) => {
         }
       } catch (error) {
         console.error('Erreur vérification maintenance:', error)
-      } finally {
-        setLoading(false)
       }
     }
 
     checkMaintenance()
   }, [location.pathname])
 
-  // Si on charge, afficher un écran blanc
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-white"></div>
-      </div>
-    )
-  }
+  // Pas de chargement - affichage direct
 
   // Si mode maintenance activé ET qu'on n'est PAS dans l'admin, afficher la page de maintenance
   if (maintenanceMode && !isAdminRoute) {
