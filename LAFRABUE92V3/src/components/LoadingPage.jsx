@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+// Écran de chargement global retiré; ce composant n'est plus utilisé
 import { useLoading } from '../contexts/LoadingContext'
 
 const LoadingPage = () => {

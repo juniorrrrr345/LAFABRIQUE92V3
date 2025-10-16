@@ -19,12 +19,10 @@ import AdminMaintenance from './pages/admin/Maintenance'
 import AdminLayout from './components/admin/AdminLayout'
 import DynamicBackground from './components/DynamicBackground'
 import MaintenanceMode from './components/MaintenanceMode'
-import LoadingPage from './components/LoadingPage'
 import { ThemeProvider } from './components/ThemeProvider'
-import { LoadingProvider, useLoading } from './contexts/LoadingContext'
+ 
 
 const AppContent = () => {
-  const { isLoading } = useLoading()
 
   // Charger le nom de la boutique pour le titre du navigateur
   useEffect(() => {
@@ -52,9 +50,7 @@ const AppContent = () => {
     document.documentElement.style.setProperty('--title-font', "'Playfair Display'")
   }, [])
 
-  if (isLoading) {
-    return <LoadingPage />
-  }
+  // Suppression de l'écran de préchargement global pour accéder directement à la boutique
 
   return (
     <Router>
@@ -89,11 +85,9 @@ const AppContent = () => {
 
 function App() {
   return (
-    <LoadingProvider>
-      <ThemeProvider>
-        <AppContent />
-      </ThemeProvider>
-    </LoadingProvider>
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
   )
 }
 
