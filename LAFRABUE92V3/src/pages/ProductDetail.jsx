@@ -156,67 +156,9 @@ const ProductDetail = () => {
               animate={{ opacity: 1, x: 0 }}
               className="space-y-4"
             >
-              {/* Média Principal */}
-              <div className="neon-border rounded-2xl overflow-hidden bg-slate-900/50 backdrop-blur-sm aspect-square sm:aspect-square">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={selectedMedia}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="w-full h-full relative z-10"
-                  >
-                    {currentMedia ? (
-                      isCloudflareStreamIframe(currentMedia) ? (
-                        <iframe
-                          src={currentMedia}
-                          className="w-full h-full"
-                          allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
-                          allowFullScreen
-                          style={{ border: 'none' }}
-                        />
-                      ) : isVideo(currentMedia) ? (
-                        <video
-                          src={currentMedia}
-                          className="w-full h-full object-cover"
-                          controls
-                          autoPlay
-                          loop
-                          muted
-                          onError={(e) => console.error('Erreur vidéo détail:', currentMedia, e)}
-                          onLoadStart={() => console.log('Chargement vidéo détail:', currentMedia)}
-                        />
-                      ) : (
-                        <img
-                          src={currentMedia}
-                          alt={product.name}
-                          className="w-full h-full object-cover"
-                          onError={(e) => console.error('Erreur image détail:', currentMedia, e)}
-                          onLoad={() => console.log('Image détail chargée:', currentMedia)}
-                        />
-                      )
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-9xl">
-                        🎁
-                      </div>
-                    )}
-                  </motion.div>
-                </AnimatePresence>
+              <div className="neon-border rounded-2xl overflow-hidden bg-slate-900/50 backdrop-blur-sm aspect-square">
+                <ImageGallery medias={medias} productName={product.name} />
               </div>
-
-              {/* Miniatures */}
-              {Array.isArray(medias) && medias.length > 1 && (
-                <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-4">
-                  {medias.map((media, index) => (
-                    <motion.div
-                      key={index}
-                      whileHover={{ scale: 1.05 }}
-                      onClick={() => setSelectedMedia(index)}
-                      className={`aspect-square rounded-lg overflow-hidden cursor-pointer border-2 transition-all ${
-                        selectedMedia === index
-                          ? 'border-white shadow-lg shadow-pink-500/50'
-                          : 'border-gray-700/30 hover:border-white/50'
-                      }`}
                     >
                       {isCloudflareStreamIframe(media) ? (
                         <div className="w-full h-full bg-slate-800 flex items-center justify-center text-2xl">
