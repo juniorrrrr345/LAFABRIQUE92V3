@@ -16,37 +16,54 @@ export const LoadingProvider = ({ children }) => {
   const [loadingProgress, setLoadingProgress] = useState(0)
   const [hasLoadedOnce, setHasLoadedOnce] = useState(false)
 
+  console.log('LoadingProvider - isLoading:', isLoading, 'progress:', loadingProgress)
+
   // Simulation du chargement initial de l'application
   useEffect(() => {
+    console.log('LoadingProvider - Début du chargement')
     const loadApp = async () => {
       try {
         setLoadingMessage('🚀 Initialisation de votre boutique...')
-        setLoadingProgress(15)
-        await new Promise(resolve => setTimeout(resolve, 600))
+        setLoadingProgress(10)
+        console.log('Étape 1: 10%')
+        await new Promise(resolve => setTimeout(resolve, 500))
+
+        setLoadingMessage('⚡ Chargement des composants...')
+        setLoadingProgress(25)
+        console.log('Étape 2: 25%')
+        await new Promise(resolve => setTimeout(resolve, 500))
 
         setLoadingMessage('✨ Chargement des produits premium...')
-        setLoadingProgress(30)
-        await new Promise(resolve => setTimeout(resolve, 700))
+        setLoadingProgress(40)
+        console.log('Étape 3: 40%')
+        await new Promise(resolve => setTimeout(resolve, 500))
 
         setLoadingMessage('🎨 Application de votre thème personnalisé...')
-        setLoadingProgress(50)
-        await new Promise(resolve => setTimeout(resolve, 600))
+        setLoadingProgress(55)
+        console.log('Étape 4: 55%')
+        await new Promise(resolve => setTimeout(resolve, 500))
 
         setLoadingMessage('🛍️ Préparation de votre expérience shopping...')
         setLoadingProgress(70)
+        console.log('Étape 5: 70%')
         await new Promise(resolve => setTimeout(resolve, 500))
 
         setLoadingMessage('💎 Optimisation des performances...')
         setLoadingProgress(85)
-        await new Promise(resolve => setTimeout(resolve, 400))
+        console.log('Étape 6: 85%')
+        await new Promise(resolve => setTimeout(resolve, 500))
 
-        setLoadingMessage('🎉 Presque prêt...')
+        setLoadingMessage('🎉 Finalisation...')
         setLoadingProgress(95)
+        console.log('Étape 7: 95%')
         await new Promise(resolve => setTimeout(resolve, 300))
 
+        setLoadingMessage('✅ Prêt !')
         setLoadingProgress(100)
+        console.log('Étape 8: 100%')
         await new Promise(resolve => setTimeout(resolve, 200))
         
+        console.log('Chargement terminé, passage à isLoading = false')
         setIsLoading(false)
         setHasLoadedOnce(true)
       } catch (error) {
@@ -60,7 +77,6 @@ export const LoadingProvider = ({ children }) => {
   }, [])
 
   const startLoading = (message = 'Chargement...') => {
-    // Ne pas afficher le chargement global si l'app a déjà été chargée une fois
     if (hasLoadedOnce) {
       return
     }
@@ -89,6 +105,8 @@ export const LoadingProvider = ({ children }) => {
     stopLoading,
     updateProgress
   }
+
+  console.log('LoadingProvider - Valeur du contexte:', value)
 
   return (
     <LoadingContext.Provider value={value}>
