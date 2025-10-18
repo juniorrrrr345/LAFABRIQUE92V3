@@ -1,9 +1,78 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 
 const ProductLoading = ({ message = "Chargement des produits...", progress = 0 }) => {
+  const [backgroundImage, setBackgroundImage] = useState('')
+  const [isLoading, setIsLoading] = useState(true)
+  const [backgroundLoaded, setBackgroundLoaded] = useState(false)
+
+  useEffect(() => {
+    const loadBackground = async () => {
+      try {
+        const { getById } = await import('../utils/api')
+        const data = await getById('settings', 'general')
+        
+        console.log('ProductLoading - Background data:', data)
+        
+        if (data && data.backgroundImage && data.backgroundImage.trim() !== '') {
+          console.log('ProductLoading - Setting background image:', data.backgroundImage)
+          setBackgroundImage(data.backgroundImage)
+          setBackgroundLoaded(true)
+        } else {
+          console.log('ProductLoading - No background image found')
+          setBackgroundLoaded(true)
+        }
+      } catch (error) {
+        console.error('ProductLoading - Error loading background:', error)
+        setBackgroundLoaded(true)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    
+    loadBackground()
+  }, [])
+
+  if (isLoading) {
+    return (
+      <div 
+        className="min-h-screen flex items-center justify-center"
+        style={{
+          background: 'linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f0f23 75%, #1a1a2e 100%)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed',
+          backgroundRepeat: 'no-repeat'
+        }}
+      >
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-white mx-auto mb-4"></div>
+          <p className="text-white text-lg">Chargement...</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div className="min-h-screen cosmic-bg flex items-center justify-center">
+    <div 
+      className="min-h-screen flex items-center justify-center"
+      style={{
+        backgroundImage: (backgroundImage && backgroundLoaded) ? `url(${backgroundImage})` : 'linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f0f23 75%, #1a1a2e 100%)',
+        background: (backgroundImage && backgroundLoaded) ? `url(${backgroundImage})` : 'linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f0f23 75%, #1a1a2e 100%)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed',
+        backgroundRepeat: 'no-repeat'
+      }}
+    >
+      {/* Debug info - à supprimer plus tard */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="fixed top-4 left-4 bg-black/80 text-white p-2 rounded text-xs z-50">
+          <div>Loading Background: {backgroundImage ? 'OUI' : 'NON'}</div>
+          <div>Loaded: {backgroundLoaded ? 'OUI' : 'NON'}</div>
+          <div>URL: {backgroundImage}</div>
+        </div>
+      )}
       <div className="text-center">
         {/* Animation de chargement sophistiquée */}
         <div className="mb-8 relative">

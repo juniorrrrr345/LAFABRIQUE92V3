@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const API_URL = 'https://oglegacy-api.calitek-junior.workers.dev'
+const API_URL = 'https://api.calitek-junior.workers.dev'
 
 async function migrateViaAPI() {
   console.log('╔═══════════════════════════════════════════════════════╗')

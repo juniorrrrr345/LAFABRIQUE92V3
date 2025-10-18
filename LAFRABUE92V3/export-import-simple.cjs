@@ -2,7 +2,7 @@
 
 const https = require('https')
 
-const API_URL = 'https://oglegacy-api.calitek-junior.workers.dev'
+const API_URL = 'https://api.calitek-junior.workers.dev'
 
 function fetchJSON(url) {
   return new Promise((resolve, reject) => {

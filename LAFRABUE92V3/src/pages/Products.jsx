@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import Footer from '../components/Footer'
-import ProductLoading from '../components/ProductLoading'
 
 const Products = () => {
   const [searchParams] = useSearchParams()
@@ -10,18 +9,40 @@ const Products = () => {
   const [allProducts, setAllProducts] = useState([])
   const [categories, setCategories] = useState([])
   const [farms, setFarms] = useState([])
-  const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('')
   const [selectedFarm, setSelectedFarm] = useState('')
   const [showFilters, setShowFilters] = useState(false)
   const [previewProduct, setPreviewProduct] = useState(null)
-  const [loadingMessage, setLoadingMessage] = useState('Chargement des produits...')
-  const [loadingProgress, setLoadingProgress] = useState(0)
+  const [isInitialLoad, setIsInitialLoad] = useState(true)
+  const [backgroundImage, setBackgroundImage] = useState('')
+  const [backgroundLoaded, setBackgroundLoaded] = useState(false)
 
   useEffect(() => {
     fetchData()
+    loadBackground()
   }, [])
+
+  const loadBackground = async () => {
+    try {
+      const { getById } = await import('../utils/api')
+      const data = await getById('settings', 'general')
+      
+      console.log('Background data:', data)
+      
+      if (data && data.backgroundImage && data.backgroundImage.trim() !== '') {
+        console.log('Setting background image:', data.backgroundImage)
+        setBackgroundImage(data.backgroundImage)
+        setBackgroundLoaded(true)
+      } else {
+        console.log('No background image found in settings')
+        setBackgroundLoaded(true)
+      }
+    } catch (error) {
+      console.error('Error loading background:', error)
+      setBackgroundLoaded(true)
+    }
+  }
 
   // Lire les paramètres d'URL au chargement
   useEffect(() => {
@@ -42,38 +63,21 @@ const Products = () => {
 
   const fetchData = async () => {
     try {
-      setLoadingMessage('Récupération des données...')
-      setLoadingProgress(20)
-      
       const { getAll } = await import('../utils/api')
       
-      setLoadingMessage('Chargement des produits...')
-      setLoadingProgress(40)
       const productsData = await getAll('products')
-      
-      setLoadingMessage('Chargement des catégories...')
-      setLoadingProgress(60)
       const categoriesData = await getAll('categories')
-      
-      setLoadingMessage('Chargement des fermes...')
-      setLoadingProgress(80)
       const farmsData = await getAll('farms')
       
-      setLoadingMessage('Finalisation...')
-      setLoadingProgress(90)
       setAllProducts(productsData)
       setProducts(productsData)
       setCategories(categoriesData)
       setFarms(farmsData)
-      
-      setLoadingMessage('Terminé!')
-      setLoadingProgress(100)
-      await new Promise(resolve => setTimeout(resolve, 500))
     } catch (error) {
       console.error('Erreur lors du chargement des produits:', error)
       setProducts([])
     } finally {
-      setLoading(false)
+      setIsInitialLoad(false)
     }
   }
 
@@ -107,13 +111,29 @@ const Products = () => {
     setSelectedFarm('')
   }
 
-  if (loading) {
-    return <ProductLoading message={loadingMessage} progress={loadingProgress} />
-  }
 
   return (
-    <div className="min-h-screen cosmic-bg">
-      <div className="pt-20 pb-8 sm:pb-16 lg:pb-24 px-4">
+    <div 
+      className="min-h-screen"
+      style={{
+        backgroundImage: (backgroundImage && backgroundLoaded) ? `url(${backgroundImage})` : 'linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f0f23 75%, #1a1a2e 100%)',
+        background: (backgroundImage && backgroundLoaded) ? `url(${backgroundImage})` : 'linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f0f23 75%, #1a1a2e 100%)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed',
+        backgroundRepeat: 'no-repeat',
+        minHeight: '100vh'
+      }}
+    >
+      {/* Debug info - à supprimer plus tard */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="fixed top-4 left-4 bg-black/80 text-white p-2 rounded text-xs z-50">
+          <div>Background: {backgroundImage ? 'OUI' : 'NON'}</div>
+          <div>Loaded: {backgroundLoaded ? 'OUI' : 'NON'}</div>
+          <div>URL: {backgroundImage}</div>
+        </div>
+      )}
+      <div className="pt-20 pb-24 px-4">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <motion.div
@@ -217,12 +237,26 @@ const Products = () => {
           </motion.div>
 
           {/* Products Grid */}
-          {products.length === 0 ? (
-            <div className="text-center py-20">
+          {isInitialLoad ? (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 md:gap-6 lg:gap-8 pb-20">
+              {/* Skeleton loaders */}
+              {Array.from({ length: 12 }).map((_, index) => (
+                <div key={index} className="neon-border rounded-2xl overflow-hidden bg-slate-900/50 backdrop-blur-sm animate-pulse">
+                  <div className="h-32 sm:h-48 md:h-64 lg:h-72 bg-slate-800"></div>
+                  <div className="p-3 sm:p-4 lg:p-6 space-y-2">
+                    <div className="h-4 bg-slate-700 rounded w-3/4"></div>
+                    <div className="h-3 bg-slate-700 rounded w-1/2"></div>
+                    <div className="h-3 bg-slate-700 rounded w-1/4"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : products.length === 0 ? (
+            <div className="text-center py-20 pb-32">
               <p className="text-gray-400 text-xl">Aucun produit disponible pour le moment</p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 md:gap-6 lg:gap-8">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 md:gap-6 lg:gap-8 pb-20">
               {Array.isArray(products) && products.map((product, index) => (
                 <ProductCard 
                   key={product.id} 
@@ -296,9 +330,9 @@ const ProductCard = ({ product, index, onPreview, categories, farms }) => {
   
   return (
     <motion.div
-      initial={{ opacity: 0, y: 50 }}
+      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.05 }}
+      transition={{ delay: index * 0.02, duration: 0.3 }}
       whileHover={{ scale: 1.05 }}
       className="neon-border rounded-2xl overflow-hidden bg-slate-900/50 backdrop-blur-sm group cursor-pointer"
     >

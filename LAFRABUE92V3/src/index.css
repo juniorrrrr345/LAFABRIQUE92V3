@@ -14,6 +14,33 @@
     /* Optimiser les performances */
     will-change: auto;
     transform: translateZ(0);
+    /* Éviter le flash noir */
+    background-color: #000000 !important;
+    min-height: 100vh;
+  }
+  
+  /* Éviter le flash de contenu non stylé */
+  html {
+    background-color: #000000 !important;
+  }
+  
+  #root {
+    background-color: #000000 !important;
+    min-height: 100vh;
+  }
+  
+  /* Classe cosmic-bg pour éviter le flash noir */
+  .cosmic-bg {
+    background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f0f23 75%, #1a1a2e 100%) !important;
+    background-size: 400% 400% !important;
+    animation: cosmicGradient 15s ease infinite;
+    min-height: 100vh;
+  }
+  
+  @keyframes cosmicGradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
   }
   
   body::before {
@@ -116,10 +143,6 @@
     border: 1px solid rgba(255, 255, 255, 0.15);
   }
 
-  .cosmic-bg {
-    /* Le fond est géré dynamiquement par DynamicBackground via body.style.backgroundImage */
-    background: transparent;
-  }
 
   /* Animations pour la page de chargement */
   @keyframes shimmer {

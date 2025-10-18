@@ -13,6 +13,7 @@ const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1)
   const [orderLink, setOrderLink] = useState('#')
   const [orderButtonText, setOrderButtonText] = useState('Commander')
+  const [backgroundImage, setBackgroundImage] = useState('')
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -38,12 +39,36 @@ const ProductDetail = () => {
         }
       }
     }
+    
+    const loadBackground = async () => {
+      try {
+        const { getById } = await import('../utils/api')
+        const data = await getById('settings', 'general')
+        
+        if (data && data.backgroundImage) {
+          setBackgroundImage(data.backgroundImage)
+        }
+      } catch (error) {
+        console.error('Error loading background:', error)
+      }
+    }
+    
     fetchProduct()
+    loadBackground()
   }, [id])
 
   if (!product) {
     return (
-      <div className="min-h-screen cosmic-bg flex items-center justify-center">
+      <div 
+        className="min-h-screen flex items-center justify-center"
+        style={{
+          backgroundImage: backgroundImage ? `url(${backgroundImage})` : 'linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f0f23 75%, #1a1a2e 100%)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed',
+          backgroundRepeat: 'no-repeat'
+        }}
+      >
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-white mx-auto mb-4"></div>
           <p className="text-white text-lg">Chargement...</p>
@@ -133,8 +158,17 @@ const ProductDetail = () => {
   }
 
   return (
-    <div className="min-h-screen cosmic-bg">
-      <div className="pt-20 pb-32 px-4">
+    <div 
+      className="min-h-screen"
+      style={{
+        backgroundImage: backgroundImage ? `url(${backgroundImage})` : 'linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f0f23 75%, #1a1a2e 100%)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed',
+        backgroundRepeat: 'no-repeat'
+      }}
+    >
+      <div className="pt-20 pb-24 px-4">
         <div className="max-w-7xl mx-auto">
           {/* Breadcrumb */}
           <motion.div
@@ -292,30 +326,116 @@ const ProductDetail = () => {
               {/* Variantes (Quantité + Prix) */}
               <div className="neon-border rounded-xl p-3 sm:p-4 lg:p-6 bg-black/90 backdrop-blur-xl border-2 border-white/30">
                 <h3 className="text-base sm:text-lg lg:text-xl font-bold text-white mb-3 sm:mb-4">💰 Quantité & Prix</h3>
-                <div className="space-y-2 sm:space-y-3">
-                  {Array.isArray(variants) && variants.map((variant, index) => (
-                    <motion.button
-                      key={index}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => setSelectedVariant(index)}
-                      className={`w-full p-2 sm:p-3 lg:p-4 rounded-lg border-2 transition-all flex items-center justify-between ${
-                        selectedVariant === index
-                          ? 'border-white bg-white/10 text-white'
-                          : 'border-gray-700/30 bg-slate-800/50 text-gray-300 hover:border-white/50'
-                      }`}
-                    >
-                      <div className="flex items-center space-x-1 sm:space-x-2 lg:space-x-3">
-                        <span className="text-lg sm:text-xl lg:text-2xl">{selectedVariant === index ? '✓' : '○'}</span>
-                        <div className="text-left">
-                          <div className="text-sm sm:text-base lg:text-lg font-bold text-white">{variant.name}</div>
-                          <div className="text-xs sm:text-sm text-gray-400 hidden sm:block">Quantité disponible</div>
+                
+                {/* Grouper les variantes par type de livraison */}
+                {(() => {
+                  const meetupVariants = variants.filter(v => v.deliveryType === 'meetup' || !v.deliveryType)
+                  const deliveryVariants = variants.filter(v => v.deliveryType === 'delivery')
+                  
+                  return (
+                    <div className="space-y-4">
+                      {/* Meet up */}
+                      {meetupVariants.length > 0 && (
+                        <div className="space-y-2">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <span className="text-2xl">🤝</span>
+                            <h4 className="text-green-400 font-bold text-sm sm:text-base">Meet up</h4>
+                          </div>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            {meetupVariants.map((variant, index) => {
+                              const globalIndex = variants.findIndex(v => v === variant)
+                              return (
+                                <motion.button
+                                  key={`meetup-${index}`}
+                                  whileHover={{ scale: 1.02 }}
+                                  whileTap={{ scale: 0.98 }}
+                                  onClick={() => setSelectedVariant(globalIndex)}
+                                  className={`p-2 sm:p-3 rounded-lg border-2 transition-all flex items-center justify-between ${
+                                    selectedVariant === globalIndex
+                                      ? 'border-green-400 bg-green-400/10 text-white'
+                                      : 'border-gray-700/30 bg-slate-800/50 text-gray-300 hover:border-green-400/50'
+                                  }`}
+                                >
+                                  <div className="flex items-center space-x-2">
+                                    <span className="text-sm sm:text-base">{selectedVariant === globalIndex ? '✓' : '○'}</span>
+                                    <div className="text-left">
+                                      <div className="text-xs sm:text-sm font-bold text-white">{variant.name}</div>
+                                    </div>
+                                  </div>
+                                  <div className="text-sm sm:text-base font-bold text-white">{variant?.price || 'N/A'}</div>
+                                </motion.button>
+                              )
+                            })}
+                          </div>
                         </div>
-                      </div>
-                      <div className="text-lg sm:text-xl lg:text-2xl font-bold text-white">{variant?.price || 'N/A'}</div>
-                    </motion.button>
-                  ))}
-                </div>
+                      )}
+                      
+                      {/* Livraison */}
+                      {deliveryVariants.length > 0 && (
+                        <div className="space-y-2">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <span className="text-2xl">🚚</span>
+                            <h4 className="text-blue-400 font-bold text-sm sm:text-base">Livraison</h4>
+                          </div>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            {deliveryVariants.map((variant, index) => {
+                              const globalIndex = variants.findIndex(v => v === variant)
+                              return (
+                                <motion.button
+                                  key={`delivery-${index}`}
+                                  whileHover={{ scale: 1.02 }}
+                                  whileTap={{ scale: 0.98 }}
+                                  onClick={() => setSelectedVariant(globalIndex)}
+                                  className={`p-2 sm:p-3 rounded-lg border-2 transition-all flex items-center justify-between ${
+                                    selectedVariant === globalIndex
+                                      ? 'border-blue-400 bg-blue-400/10 text-white'
+                                      : 'border-gray-700/30 bg-slate-800/50 text-gray-300 hover:border-blue-400/50'
+                                  }`}
+                                >
+                                  <div className="flex items-center space-x-2">
+                                    <span className="text-sm sm:text-base">{selectedVariant === globalIndex ? '✓' : '○'}</span>
+                                    <div className="text-left">
+                                      <div className="text-xs sm:text-sm font-bold text-white">{variant.name}</div>
+                                    </div>
+                                  </div>
+                                  <div className="text-sm sm:text-base font-bold text-white">{variant?.price || 'N/A'}</div>
+                                </motion.button>
+                              )
+                            })}
+                          </div>
+                        </div>
+                      )}
+                      
+                      {/* Si pas de variantes avec type de livraison, afficher l'ancien format */}
+                      {meetupVariants.length === 0 && deliveryVariants.length === 0 && (
+                        <div className="space-y-2 sm:space-y-3">
+                          {Array.isArray(variants) && variants.map((variant, index) => (
+                            <motion.button
+                              key={index}
+                              whileHover={{ scale: 1.02 }}
+                              whileTap={{ scale: 0.98 }}
+                              onClick={() => setSelectedVariant(index)}
+                              className={`w-full p-2 sm:p-3 lg:p-4 rounded-lg border-2 transition-all flex items-center justify-between ${
+                                selectedVariant === index
+                                  ? 'border-white bg-white/10 text-white'
+                                  : 'border-gray-700/30 bg-slate-800/50 text-gray-300 hover:border-white/50'
+                              }`}
+                            >
+                              <div className="flex items-center space-x-1 sm:space-x-2 lg:space-x-3">
+                                <span className="text-lg sm:text-xl lg:text-2xl">{selectedVariant === index ? '✓' : '○'}</span>
+                                <div className="text-left">
+                                  <div className="text-sm sm:text-base lg:text-lg font-bold text-white">{variant.name}</div>
+                                  <div className="text-xs sm:text-sm text-gray-400 hidden sm:block">Quantité disponible</div>
+                                </div>
+                              </div>
+                              <div className="text-lg sm:text-xl lg:text-2xl font-bold text-white">{variant?.price || 'N/A'}</div>
+                            </motion.button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )
+                })()}
               </div>
 
               {/* Commande */}
