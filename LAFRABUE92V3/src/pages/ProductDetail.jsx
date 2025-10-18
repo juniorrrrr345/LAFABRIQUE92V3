@@ -11,6 +11,7 @@ const ProductDetail = () => {
   const [selectedVariant, setSelectedVariant] = useState(0)
   const [selectedMedia, setSelectedMedia] = useState(0)
   const [quantity, setQuantity] = useState(1)
+  const [deliveryMode, setDeliveryMode] = useState('meetup') // 'meetup' ou 'livraison'
   const [orderLink, setOrderLink] = useState('#')
   const [orderButtonText, setOrderButtonText] = useState('Commander')
 
@@ -45,8 +46,7 @@ const ProductDetail = () => {
     return (
       <div className="min-h-screen cosmic-bg flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-white mx-auto mb-4"></div>
-          <p className="text-white text-lg">Chargement...</p>
+          <p className="text-white text-lg">Produit non trouvé</p>
         </div>
       </div>
     )
@@ -92,22 +92,33 @@ const ProductDetail = () => {
     return url.includes('cloudflarestream.com') && url.includes('iframe')
   }
   
-  // Convertir prices en variants si nécessaire
-  let variants = product.variants || [];
-  
-  // Si pas de variants, essayer de convertir depuis prices
-  if (!Array.isArray(variants) || variants.length === 0) {
-    if (product.prices && typeof product.prices === 'object') {
-      variants = Object.entries(product.prices).map(([name, price]) => ({
-        name,
-        price: typeof price === 'number' ? `${price}€` : price.toString()
-      }));
-    } else if (product.price) {
-      variants = [{ name: 'Standard', price: product.price }];
+  // Structure de prix avec Meet up et Livraison
+  const priceStructure = {
+    meetup: {
+      '5g': 40,
+      '10g': 70,
+      '25g': 110,
+      '50g': 220,
+      '100g': 440
+    },
+    livraison: {
+      '5g': 50,
+      '10g': 90,
+      '25g': 140,
+      '50g': 250,
+      '100g': 470
     }
   }
+  
+  // Créer les variants basés sur la structure de prix
+  const variants = Object.keys(priceStructure.meetup).map(quantity => ({
+    name: quantity,
+    meetupPrice: priceStructure.meetup[quantity],
+    livraisonPrice: priceStructure.livraison[quantity]
+  }))
 
-  const currentVariant = variants[selectedVariant] || variants[0] || { name: 'Standard', price: product.price || 'N/A' }
+  const currentVariant = variants[selectedVariant] || variants[0]
+  const currentPrice = deliveryMode === 'meetup' ? currentVariant?.meetupPrice : currentVariant?.livraisonPrice
   const currentMedia = medias[selectedMedia]
   
   // Trouver les noms de catégorie et farm (convertir en string pour la comparaison)
@@ -120,7 +131,8 @@ const ProductDetail = () => {
       return
     }
     
-    const message = `Bonjour, je voudrais commander:\n\n${product.name}\n${currentVariant?.name || 'Standard'} - ${currentVariant?.price || 'N/A'}`
+    const modeText = deliveryMode === 'meetup' ? 'Meet up' : 'Livraison'
+    const message = `Bonjour, je voudrais commander:\n\n${product.name}\n${currentVariant?.name || 'Standard'} - ${currentPrice}€ (${modeText})`
     
     // Si c'est un lien WhatsApp, ajouter le message
     if (orderLink.includes('wa.me') || orderLink.includes('whatsapp')) {
@@ -264,7 +276,10 @@ const ProductDetail = () => {
                 </h1>
                 <div className="flex items-baseline flex-wrap gap-2 sm:gap-3 mb-2 sm:mb-3">
                   <span className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white">
-                    {currentVariant?.price || 'N/A'}
+                    {currentPrice}€
+                  </span>
+                  <span className="text-lg text-gray-300">
+                    {deliveryMode === 'meetup' ? 'Meet up' : 'Livraison'}
                   </span>
                 </div>
                 <div className="flex flex-wrap gap-1 sm:gap-2">
@@ -289,11 +304,44 @@ const ProductDetail = () => {
                 </p>
               </div>
 
+              {/* Mode de livraison */}
+              <div className="neon-border rounded-xl p-3 sm:p-4 lg:p-6 bg-black/90 backdrop-blur-xl border-2 border-white/30">
+                <h3 className="text-base sm:text-lg lg:text-xl font-bold text-white mb-3 sm:mb-4">🚚 Mode de livraison</h3>
+                <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => setDeliveryMode('meetup')}
+                    className={`p-2 sm:p-3 lg:p-4 rounded-lg border-2 transition-all text-center ${
+                      deliveryMode === 'meetup'
+                        ? 'border-white bg-white/10 text-white'
+                        : 'border-gray-700/30 bg-slate-800/50 text-gray-300 hover:border-white/50'
+                    }`}
+                  >
+                    <div className="text-lg sm:text-xl lg:text-2xl mb-1">🤝</div>
+                    <div className="text-sm sm:text-base font-bold">Meet up</div>
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => setDeliveryMode('livraison')}
+                    className={`p-2 sm:p-3 lg:p-4 rounded-lg border-2 transition-all text-center ${
+                      deliveryMode === 'livraison'
+                        ? 'border-white bg-white/10 text-white'
+                        : 'border-gray-700/30 bg-slate-800/50 text-gray-300 hover:border-white/50'
+                    }`}
+                  >
+                    <div className="text-lg sm:text-xl lg:text-2xl mb-1">🚚</div>
+                    <div className="text-sm sm:text-base font-bold">Livraison</div>
+                  </motion.button>
+                </div>
+              </div>
+
               {/* Variantes (Quantité + Prix) */}
               <div className="neon-border rounded-xl p-3 sm:p-4 lg:p-6 bg-black/90 backdrop-blur-xl border-2 border-white/30">
                 <h3 className="text-base sm:text-lg lg:text-xl font-bold text-white mb-3 sm:mb-4">💰 Quantité & Prix</h3>
                 <div className="space-y-2 sm:space-y-3">
-                  {Array.isArray(variants) && variants.map((variant, index) => (
+                  {variants.map((variant, index) => (
                     <motion.button
                       key={index}
                       whileHover={{ scale: 1.02 }}
@@ -312,7 +360,14 @@ const ProductDetail = () => {
                           <div className="text-xs sm:text-sm text-gray-400 hidden sm:block">Quantité disponible</div>
                         </div>
                       </div>
-                      <div className="text-lg sm:text-xl lg:text-2xl font-bold text-white">{variant?.price || 'N/A'}</div>
+                      <div className="flex flex-col items-end">
+                        <div className="text-lg sm:text-xl lg:text-2xl font-bold text-white">
+                          {deliveryMode === 'meetup' ? variant.meetupPrice : variant.livraisonPrice}€
+                        </div>
+                        <div className="text-xs text-gray-400">
+                          {deliveryMode === 'meetup' ? `Livraison: ${variant.livraisonPrice}€` : `Meet up: ${variant.meetupPrice}€`}
+                        </div>
+                      </div>
                     </motion.button>
                   ))}
                 </div>
