@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 
 const ProductLoading = ({ message = "Chargement des produits...", progress = 0 }) => {
   return (
-    <div className="min-h-screen cosmic-bg flex items-center justify-center">
+    <div className="min-h-screen cosmic-bg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f0f23 75%, #1a1a2e 100%)' }}>
       <div className="text-center">
         {/* Animation de chargement sophistiquée */}
         <div className="mb-8 relative">
