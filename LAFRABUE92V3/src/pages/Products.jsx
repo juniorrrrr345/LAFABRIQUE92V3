@@ -14,6 +14,7 @@ const Products = () => {
   const [selectedFarm, setSelectedFarm] = useState('')
   const [showFilters, setShowFilters] = useState(false)
   const [previewProduct, setPreviewProduct] = useState(null)
+  const [isInitialLoad, setIsInitialLoad] = useState(true)
 
   useEffect(() => {
     fetchData()
@@ -51,6 +52,8 @@ const Products = () => {
     } catch (error) {
       console.error('Erreur lors du chargement des produits:', error)
       setProducts([])
+    } finally {
+      setIsInitialLoad(false)
     }
   }
 
@@ -191,7 +194,21 @@ const Products = () => {
           </motion.div>
 
           {/* Products Grid */}
-          {products.length === 0 ? (
+          {isInitialLoad ? (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 md:gap-6 lg:gap-8">
+              {/* Skeleton loaders */}
+              {Array.from({ length: 12 }).map((_, index) => (
+                <div key={index} className="neon-border rounded-2xl overflow-hidden bg-slate-900/50 backdrop-blur-sm animate-pulse">
+                  <div className="h-32 sm:h-48 md:h-64 lg:h-72 bg-slate-800"></div>
+                  <div className="p-3 sm:p-4 lg:p-6 space-y-2">
+                    <div className="h-4 bg-slate-700 rounded w-3/4"></div>
+                    <div className="h-3 bg-slate-700 rounded w-1/2"></div>
+                    <div className="h-3 bg-slate-700 rounded w-1/4"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : products.length === 0 ? (
             <div className="text-center py-20">
               <p className="text-gray-400 text-xl">Aucun produit disponible pour le moment</p>
             </div>
@@ -270,9 +287,9 @@ const ProductCard = ({ product, index, onPreview, categories, farms }) => {
   
   return (
     <motion.div
-      initial={{ opacity: 0, y: 50 }}
+      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.05 }}
+      transition={{ delay: index * 0.02, duration: 0.3 }}
       whileHover={{ scale: 1.05 }}
       className="neon-border rounded-2xl overflow-hidden bg-slate-900/50 backdrop-blur-sm group cursor-pointer"
     >
