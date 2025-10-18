@@ -437,7 +437,7 @@
       "name": "Potato",
       "icon": "🥔",
       "description": "Rejoignez Nous",
-      "url": "https://ptdl159.org/oglegacy"
+      "url": "https://notre-boutique.com"
     },
     {
       "id": "1760463569776",
@@ -458,7 +458,7 @@
         {
           "icon": "https://pub-53af7ff6cf154e87af25e68525a4bf74.r2.dev/1760462813911-télécharger.jpg",
           "title": "INFORMATIONS",
-          "content": "📍CHEZ NOUS TU PEUX COMMANDER POUR TE FAIRE LIVRER À DOMICILE DE 14H à 02H📍\n\n🚚 PROFITEZ DE NOTRE SERVICE DE LIVRAISON\n\nOU\n\n\n📍PASSEZ RÉCUPÉRER SUR PLACE 92 DE 12H à 00H\n\nÀ 10 MINUTES DE PARIS LIGNE 13\n\n4 MINUTE À PIED DE LA STATION\n\n( L’adresse change a chaque fois )✅✅⚡️\n\nLIVRAISON DISPO 95/78/92/93/91/94/75/77/60\n\nCANAL DE SECOUR : https://t.me/oglegacysecour"
+          "content": "📍CHEZ NOUS TU PEUX COMMANDER POUR TE FAIRE LIVRER À DOMICILE DE 14H à 02H📍\n\n🚚 PROFITEZ DE NOTRE SERVICE DE LIVRAISON\n\nOU\n\n\n📍PASSEZ RÉCUPÉRER SUR PLACE 92 DE 12H à 00H\n\nÀ 10 MINUTES DE PARIS LIGNE 13\n\n4 MINUTE À PIED DE LA STATION\n\n( L’adresse change a chaque fois )✅✅⚡️\n\nLIVRAISON DISPO 95/78/92/93/91/94/75/77/60\n\nCANAL DE SECOUR : https://t.me/notre-boutique-secour"
         }
       ],
       "updatedAt": "2025-10-14T17:56:24.371Z"
@@ -466,16 +466,16 @@
     "general": {
       "id": "general",
       "key": "general",
-      "shopName": "OGLEGACY",
-      "heroTitle1": "OGLEGACY",
+      "shopName": "Notre Boutique",
+      "heroTitle1": "Notre Boutique",
       "heroTitle2": "BIENVENUE CHEZ ",
-      "heroTitle3": "OG LEGACY COFFEE 🔥🌿",
+      "heroTitle3": "NOTRE BOUTIQUE 🔥🌿",
       "backgroundImage": "https://pub-53af7ff6cf154e87af25e68525a4bf74.r2.dev/1760462527377-5c54d1ec-bb77-454f-af96-7203e4e0d7e0.jpeg",
       "updatedAt": "2025-10-14T17:56:24.280Z",
       "textColor": "#ffffff",
       "headingColor": "#ffffff",
       "accentColor": "#000000",
-      "heroTitle": "OG LEGACY",
+      "heroTitle": "Notre Boutique",
       "heroSubtitle": "CACA",
       "secondaryTextColor": "#fefbfb",
       "maintenanceMode": false,

@@ -6,7 +6,7 @@ import { uploadToR2 } from '../../utils/cloudflare'
 const AdminSettings = () => {
   const [settings, setSettings] = useState({
     shopName: 'AVEC Amour',
-    heroTitle: 'OG LEGACY',
+    heroTitle: 'Notre Boutique',
     heroSubtitle: 'Votre texte d\'accueil',
     backgroundImage: ''
   })

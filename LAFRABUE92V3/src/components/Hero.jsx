@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 const Hero = () => {
   const [openSection, setOpenSection] = useState(null)
   const [settings, setSettings] = useState({
-    heroTitle: 'OG LEGACY',
+    heroTitle: 'Notre Boutique',
     heroSubtitle: 'Votre meilleur café à Paris'
   })
   const [sections, setSections] = useState([
