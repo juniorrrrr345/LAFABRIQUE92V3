@@ -9,7 +9,6 @@ const Products = () => {
   const [allProducts, setAllProducts] = useState([])
   const [categories, setCategories] = useState([])
   const [farms, setFarms] = useState([])
-  const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('')
   const [selectedFarm, setSelectedFarm] = useState('')
@@ -52,8 +51,6 @@ const Products = () => {
     } catch (error) {
       console.error('Erreur lors du chargement des produits:', error)
       setProducts([])
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -87,15 +84,6 @@ const Products = () => {
     setSelectedFarm('')
   }
 
-  if (loading) {
-    return (
-      <div className="min-h-screen cosmic-bg flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-white mx-auto mb-4"></div>
-        </div>
-      </div>
-    )
-  }
 
   return (
     <div className="min-h-screen cosmic-bg">
