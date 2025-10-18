@@ -367,14 +367,20 @@ const ProductModal = ({ product, onClose, onSuccess }) => {
   })
   const [photo, setPhoto] = useState(product?.photo || null)
   const [video, setVideo] = useState(product?.video || null)
+  const [deliveryOptions, setDeliveryOptions] = useState({
+    meetup: product?.deliveryOptions?.meetup || false,
+    delivery: product?.deliveryOptions?.delivery || false
+  })
   const [variants, setVariants] = useState(
     product?.variants || 
     (product ? [{
       name: 'Standard',
-      price: product.price || ''
+      price: product.price || '',
+      deliveryType: 'meetup'
     }] : [{
       name: '',
-      price: ''
+      price: '',
+      deliveryType: 'meetup'
     }])
   )
   const [categories, setCategories] = useState([])
@@ -456,7 +462,49 @@ const ProductModal = ({ product, onClose, onSuccess }) => {
   }
 
   const addVariant = () => {
-    setVariants([...variants, { name: '', price: '' }])
+    setVariants([...variants, { name: '', price: '', deliveryType: 'meetup' }])
+  }
+
+  // Fonction pour générer des variantes automatiquement basées sur les options de livraison
+  const generateVariantsFromDeliveryOptions = () => {
+    const quantities = ['5g', '10g', '25g', '50g', '100g']
+    const newVariants = []
+    
+    if (deliveryOptions.meetup) {
+      quantities.forEach(qty => {
+        newVariants.push({
+          name: qty,
+          price: '',
+          deliveryType: 'meetup'
+        })
+      })
+    }
+    
+    if (deliveryOptions.delivery) {
+      quantities.forEach(qty => {
+        newVariants.push({
+          name: qty,
+          price: '',
+          deliveryType: 'delivery'
+        })
+      })
+    }
+    
+    return newVariants
+  }
+
+  // Gérer le changement des options de livraison
+  const handleDeliveryOptionChange = (option, checked) => {
+    const newOptions = { ...deliveryOptions, [option]: checked }
+    setDeliveryOptions(newOptions)
+    
+    // Si c'est la première option cochée, générer des variantes automatiquement
+    if (checked && !deliveryOptions.meetup && !deliveryOptions.delivery) {
+      const autoVariants = generateVariantsFromDeliveryOptions()
+      if (autoVariants.length > 0) {
+        setVariants(autoVariants)
+      }
+    }
   }
 
   const removeVariant = (index) => {
@@ -469,6 +517,30 @@ const ProductModal = ({ product, onClose, onSuccess }) => {
     const newVariants = [...variants]
     newVariants[index][field] = value
     setVariants(newVariants)
+  }
+
+  // Fonction pour obtenir la couleur selon le type de livraison
+  const getDeliveryTypeColor = (type) => {
+    switch (type) {
+      case 'meetup':
+        return 'text-green-400 border-green-400 bg-green-400/10'
+      case 'delivery':
+        return 'text-blue-400 border-blue-400 bg-blue-400/10'
+      default:
+        return 'text-gray-400 border-gray-400 bg-gray-400/10'
+    }
+  }
+
+  // Fonction pour obtenir l'icône selon le type de livraison
+  const getDeliveryTypeIcon = (type) => {
+    switch (type) {
+      case 'meetup':
+        return '🤝'
+      case 'delivery':
+        return '🚚'
+      default:
+        return '📦'
+    }
   }
 
   const handleSubmit = async (e) => {
@@ -499,6 +571,7 @@ const ProductModal = ({ product, onClose, onSuccess }) => {
         video,
         medias,
         variants: validVariants,
+        deliveryOptions: deliveryOptions,
         // Pour la compatibilité avec l'ancien système
         image: video || photo || null,
         price: validVariants[0].price,
@@ -599,6 +672,54 @@ const ProductModal = ({ product, onClose, onSuccess }) => {
             </select>
           </div>
 
+          {/* Options de livraison */}
+          <div className="border border-gray-700/30 rounded-lg p-4">
+            <label className="block text-white font-semibold mb-3">🚚 Options de livraison</label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Meet up */}
+              <label className="flex items-center space-x-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={deliveryOptions.meetup}
+                  onChange={(e) => handleDeliveryOptionChange('meetup', e.target.checked)}
+                  className="w-5 h-5 text-green-400 bg-slate-800 border-gray-600 rounded focus:ring-green-400 focus:ring-2"
+                />
+                <div className="flex items-center space-x-2">
+                  <span className="text-2xl">🤝</span>
+                  <div>
+                    <div className="text-green-400 font-semibold">Meet up</div>
+                    <div className="text-gray-400 text-sm">Rencontre en personne</div>
+                  </div>
+                </div>
+              </label>
+
+              {/* Livraison */}
+              <label className="flex items-center space-x-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={deliveryOptions.delivery}
+                  onChange={(e) => handleDeliveryOptionChange('delivery', e.target.checked)}
+                  className="w-5 h-5 text-blue-400 bg-slate-800 border-gray-600 rounded focus:ring-blue-400 focus:ring-2"
+                />
+                <div className="flex items-center space-x-2">
+                  <span className="text-2xl">🚚</span>
+                  <div>
+                    <div className="text-blue-400 font-semibold">Livraison</div>
+                    <div className="text-gray-400 text-sm">Livraison à domicile</div>
+                  </div>
+                </div>
+              </label>
+            </div>
+            
+            {!deliveryOptions.meetup && !deliveryOptions.delivery && (
+              <div className="mt-3 p-3 bg-yellow-900/20 border border-yellow-500/50 rounded-lg">
+                <p className="text-yellow-400 text-sm">
+                  ⚠️ Veuillez sélectionner au moins une option de livraison
+                </p>
+              </div>
+            )}
+          </div>
+
           {/* Photo */}
           <div className="border border-gray-700/30 rounded-lg p-4">
             <label className="block text-white font-semibold mb-3">📸 Photo du produit</label>
@@ -683,14 +804,46 @@ const ProductModal = ({ product, onClose, onSuccess }) => {
           {/* Variantes */}
           <div className="border border-gray-700/30 rounded-lg p-4">
             <div className="flex items-center justify-between mb-3">
-              <label className="block text-white font-semibold">💰 Variantes (Quantité + Prix)</label>
-              <button
-                type="button"
-                onClick={addVariant}
-                className="px-3 py-1 bg-gray-700 text-white rounded text-sm hover:bg-gray-600"
-              >
-                + Ajouter
-              </button>
+              <label className="block text-white font-semibold">💰 Variantes (Quantité + Prix + Type de livraison)</label>
+              <div className="flex space-x-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const quantities = ['5g', '10g', '25g', '50g', '100g']
+                    const newVariants = quantities.map(qty => ({
+                      name: qty,
+                      price: '',
+                      deliveryType: 'meetup'
+                    }))
+                    setVariants([...variants, ...newVariants])
+                  }}
+                  className="px-3 py-1 bg-green-700 text-white rounded text-sm hover:bg-green-600"
+                >
+                  + Meet up
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const quantities = ['5g', '10g', '25g', '50g', '100g']
+                    const newVariants = quantities.map(qty => ({
+                      name: qty,
+                      price: '',
+                      deliveryType: 'delivery'
+                    }))
+                    setVariants([...variants, ...newVariants])
+                  }}
+                  className="px-3 py-1 bg-blue-700 text-white rounded text-sm hover:bg-blue-600"
+                >
+                  + Livraison
+                </button>
+                <button
+                  type="button"
+                  onClick={addVariant}
+                  className="px-3 py-1 bg-gray-700 text-white rounded text-sm hover:bg-gray-600"
+                >
+                  + Manuel
+                </button>
+              </div>
             </div>
 
             {/* Conteneur scrollable pour les variantes sur mobile */}
@@ -698,25 +851,56 @@ const ProductModal = ({ product, onClose, onSuccess }) => {
               {/* Indicateur de scroll sur mobile */}
               <div className="sm:hidden absolute top-0 right-0 w-6 h-6 bg-gradient-to-l from-slate-900 to-transparent pointer-events-none z-10"></div>
               {variants.map((variant, index) => (
-                <div key={index} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 bg-slate-800/50 p-3 rounded-lg min-w-0 mobile-variant-item">
+                <div key={index} className={`flex flex-col sm:flex-row items-stretch sm:items-center gap-2 p-3 rounded-lg min-w-0 mobile-variant-item border ${getDeliveryTypeColor(variant.deliveryType || 'meetup')}`}>
                   <div className="flex flex-col sm:flex-row gap-2 w-full min-w-0">
-                    <input
-                      type="text"
-                      placeholder="5g"
-                      value={variant.name}
-                      onChange={(e) => updateVariant(index, 'name', e.target.value)}
-                      className="w-full sm:flex-1 px-3 py-2 bg-slate-800 border border-gray-700/30 rounded text-white focus:outline-none focus:border-white min-w-0"
-                      required
-                    />
-                    <input
-                      type="text"
-                      placeholder="20€"
-                      value={variant.price}
-                      onChange={(e) => updateVariant(index, 'price', e.target.value)}
-                      className="w-full sm:flex-1 px-3 py-2 bg-slate-800 border border-gray-700/30 rounded text-white focus:outline-none focus:border-white min-w-0"
-                      required
-                    />
+                    {/* Quantité */}
+                    <div className="w-full sm:flex-1">
+                      <label className="block text-xs text-gray-400 mb-1">Quantité</label>
+                      <input
+                        type="text"
+                        placeholder="5g"
+                        value={variant.name}
+                        onChange={(e) => updateVariant(index, 'name', e.target.value)}
+                        className="w-full px-3 py-2 bg-slate-800 border border-gray-700/30 rounded text-white focus:outline-none focus:border-white min-w-0"
+                        required
+                      />
+                    </div>
+                    
+                    {/* Prix */}
+                    <div className="w-full sm:flex-1">
+                      <label className="block text-xs text-gray-400 mb-1">Prix</label>
+                      <input
+                        type="text"
+                        placeholder="20€"
+                        value={variant.price}
+                        onChange={(e) => updateVariant(index, 'price', e.target.value)}
+                        className="w-full px-3 py-2 bg-slate-800 border border-gray-700/30 rounded text-white focus:outline-none focus:border-white min-w-0"
+                        required
+                      />
+                    </div>
+                    
+                    {/* Type de livraison */}
+                    <div className="w-full sm:flex-1">
+                      <label className="block text-xs text-gray-400 mb-1">Type de livraison</label>
+                      <select
+                        value={variant.deliveryType || 'meetup'}
+                        onChange={(e) => updateVariant(index, 'deliveryType', e.target.value)}
+                        className="w-full px-3 py-2 bg-slate-800 border border-gray-700/30 rounded text-white focus:outline-none focus:border-white"
+                      >
+                        <option value="meetup">🤝 Meet up</option>
+                        <option value="delivery">🚚 Livraison</option>
+                      </select>
+                    </div>
                   </div>
+                  
+                  {/* Indicateur visuel du type de livraison */}
+                  <div className={`flex items-center space-x-1 px-2 py-1 rounded text-xs font-semibold ${getDeliveryTypeColor(variant.deliveryType || 'meetup')}`}>
+                    <span>{getDeliveryTypeIcon(variant.deliveryType || 'meetup')}</span>
+                    <span className="hidden sm:inline">
+                      {variant.deliveryType === 'meetup' ? 'Meet up' : 'Livraison'}
+                    </span>
+                  </div>
+                  
                   {variants.length > 1 && (
                     <button
                       type="button"
