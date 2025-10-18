@@ -13,9 +13,9 @@ const Footer = () => {
   ]
 
   return (
-    <footer className="fixed bottom-0 left-0 right-0 z-50 bg-black/70 backdrop-blur-md border-t border-white/10">
+    <footer className="fixed bottom-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-md border-t border-white/10">
       <nav className="max-w-7xl mx-auto px-4">
-        <div className="flex items-center justify-around py-4">
+        <div className="flex items-center justify-around py-3">
           {navItems.map((item) => {
             const isActive = location.pathname === item.to
             
@@ -28,7 +28,7 @@ const Footer = () => {
                 <motion.div
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
-                  className={`text-3xl transition-all duration-300 ${
+                  className={`text-2xl transition-all duration-300 ${
                     isActive 
                       ? 'filter drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]' 
                       : 'opacity-70 group-hover:opacity-100'
