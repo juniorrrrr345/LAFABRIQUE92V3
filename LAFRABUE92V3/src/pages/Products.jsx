@@ -16,6 +16,7 @@ const Products = () => {
   const [previewProduct, setPreviewProduct] = useState(null)
   const [isInitialLoad, setIsInitialLoad] = useState(true)
   const [backgroundImage, setBackgroundImage] = useState('')
+  const [backgroundLoaded, setBackgroundLoaded] = useState(false)
 
   useEffect(() => {
     fetchData()
@@ -27,11 +28,30 @@ const Products = () => {
       const { getById } = await import('../utils/api')
       const data = await getById('settings', 'general')
       
+      console.log('Background data:', data)
+      
       if (data && data.backgroundImage) {
+        console.log('Setting background image:', data.backgroundImage)
         setBackgroundImage(data.backgroundImage)
+        
+        // Précharger l'image
+        const img = new Image()
+        img.onload = () => {
+          console.log('Background image loaded successfully')
+          setBackgroundLoaded(true)
+        }
+        img.onerror = () => {
+          console.log('Failed to load background image')
+          setBackgroundLoaded(true)
+        }
+        img.src = data.backgroundImage
+      } else {
+        console.log('No background image found in settings')
+        setBackgroundLoaded(true)
       }
     } catch (error) {
       console.error('Error loading background:', error)
+      setBackgroundLoaded(true)
     }
   }
 
@@ -107,7 +127,7 @@ const Products = () => {
     <div 
       className="min-h-screen"
       style={{
-        backgroundImage: backgroundImage ? `url(${backgroundImage})` : 'linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f0f23 75%, #1a1a2e 100%)',
+        backgroundImage: (backgroundImage && backgroundLoaded) ? `url(${backgroundImage})` : 'linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f0f23 75%, #1a1a2e 100%)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundAttachment: 'fixed',

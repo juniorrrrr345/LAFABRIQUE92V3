@@ -3,6 +3,8 @@ import { motion } from 'framer-motion'
 
 const ProductLoading = ({ message = "Chargement des produits...", progress = 0 }) => {
   const [backgroundImage, setBackgroundImage] = useState('')
+  const [isLoading, setIsLoading] = useState(true)
+  const [backgroundLoaded, setBackgroundLoaded] = useState(false)
 
   useEffect(() => {
     const loadBackground = async () => {
@@ -10,22 +12,63 @@ const ProductLoading = ({ message = "Chargement des produits...", progress = 0 }
         const { getById } = await import('../utils/api')
         const data = await getById('settings', 'general')
         
+        console.log('ProductLoading - Background data:', data)
+        
         if (data && data.backgroundImage) {
+          console.log('ProductLoading - Setting background image:', data.backgroundImage)
           setBackgroundImage(data.backgroundImage)
+          
+          // Précharger l'image
+          const img = new Image()
+          img.onload = () => {
+            console.log('ProductLoading - Background image loaded successfully')
+            setBackgroundLoaded(true)
+          }
+          img.onerror = () => {
+            console.log('ProductLoading - Failed to load background image')
+            setBackgroundLoaded(true)
+          }
+          img.src = data.backgroundImage
+        } else {
+          console.log('ProductLoading - No background image found')
+          setBackgroundLoaded(true)
         }
       } catch (error) {
-        console.error('Error loading background:', error)
+        console.error('ProductLoading - Error loading background:', error)
+        setBackgroundLoaded(true)
+      } finally {
+        setIsLoading(false)
       }
     }
     
     loadBackground()
   }, [])
 
+  if (isLoading) {
+    return (
+      <div 
+        className="min-h-screen flex items-center justify-center"
+        style={{
+          background: 'linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f0f23 75%, #1a1a2e 100%)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed',
+          backgroundRepeat: 'no-repeat'
+        }}
+      >
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-white mx-auto mb-4"></div>
+          <p className="text-white text-lg">Chargement...</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div 
       className="min-h-screen flex items-center justify-center"
       style={{
-        backgroundImage: backgroundImage ? `url(${backgroundImage})` : 'linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f0f23 75%, #1a1a2e 100%)',
+        backgroundImage: (backgroundImage && backgroundLoaded) ? `url(${backgroundImage})` : 'linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f0f23 75%, #1a1a2e 100%)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundAttachment: 'fixed',
