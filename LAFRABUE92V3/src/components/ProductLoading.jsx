@@ -14,21 +14,10 @@ const ProductLoading = ({ message = "Chargement des produits...", progress = 0 }
         
         console.log('ProductLoading - Background data:', data)
         
-        if (data && data.backgroundImage) {
+        if (data && data.backgroundImage && data.backgroundImage.trim() !== '') {
           console.log('ProductLoading - Setting background image:', data.backgroundImage)
           setBackgroundImage(data.backgroundImage)
-          
-          // Précharger l'image
-          const img = new Image()
-          img.onload = () => {
-            console.log('ProductLoading - Background image loaded successfully')
-            setBackgroundLoaded(true)
-          }
-          img.onerror = () => {
-            console.log('ProductLoading - Failed to load background image')
-            setBackgroundLoaded(true)
-          }
-          img.src = data.backgroundImage
+          setBackgroundLoaded(true)
         } else {
           console.log('ProductLoading - No background image found')
           setBackgroundLoaded(true)
@@ -69,12 +58,21 @@ const ProductLoading = ({ message = "Chargement des produits...", progress = 0 }
       className="min-h-screen flex items-center justify-center"
       style={{
         backgroundImage: (backgroundImage && backgroundLoaded) ? `url(${backgroundImage})` : 'linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f0f23 75%, #1a1a2e 100%)',
+        background: (backgroundImage && backgroundLoaded) ? `url(${backgroundImage})` : 'linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f0f23 75%, #1a1a2e 100%)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundAttachment: 'fixed',
         backgroundRepeat: 'no-repeat'
       }}
     >
+      {/* Debug info - à supprimer plus tard */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="fixed top-4 left-4 bg-black/80 text-white p-2 rounded text-xs z-50">
+          <div>Loading Background: {backgroundImage ? 'OUI' : 'NON'}</div>
+          <div>Loaded: {backgroundLoaded ? 'OUI' : 'NON'}</div>
+          <div>URL: {backgroundImage}</div>
+        </div>
+      )}
       <div className="text-center">
         {/* Animation de chargement sophistiquée */}
         <div className="mb-8 relative">

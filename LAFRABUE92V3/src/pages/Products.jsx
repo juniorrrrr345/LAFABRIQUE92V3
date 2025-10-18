@@ -30,21 +30,10 @@ const Products = () => {
       
       console.log('Background data:', data)
       
-      if (data && data.backgroundImage) {
+      if (data && data.backgroundImage && data.backgroundImage.trim() !== '') {
         console.log('Setting background image:', data.backgroundImage)
         setBackgroundImage(data.backgroundImage)
-        
-        // Précharger l'image
-        const img = new Image()
-        img.onload = () => {
-          console.log('Background image loaded successfully')
-          setBackgroundLoaded(true)
-        }
-        img.onerror = () => {
-          console.log('Failed to load background image')
-          setBackgroundLoaded(true)
-        }
-        img.src = data.backgroundImage
+        setBackgroundLoaded(true)
       } else {
         console.log('No background image found in settings')
         setBackgroundLoaded(true)
@@ -128,12 +117,22 @@ const Products = () => {
       className="min-h-screen"
       style={{
         backgroundImage: (backgroundImage && backgroundLoaded) ? `url(${backgroundImage})` : 'linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f0f23 75%, #1a1a2e 100%)',
+        background: (backgroundImage && backgroundLoaded) ? `url(${backgroundImage})` : 'linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f0f23 75%, #1a1a2e 100%)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundAttachment: 'fixed',
-        backgroundRepeat: 'no-repeat'
+        backgroundRepeat: 'no-repeat',
+        minHeight: '100vh'
       }}
     >
+      {/* Debug info - à supprimer plus tard */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="fixed top-4 left-4 bg-black/80 text-white p-2 rounded text-xs z-50">
+          <div>Background: {backgroundImage ? 'OUI' : 'NON'}</div>
+          <div>Loaded: {backgroundLoaded ? 'OUI' : 'NON'}</div>
+          <div>URL: {backgroundImage}</div>
+        </div>
+      )}
       <div className="pt-20 pb-24 px-4">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
