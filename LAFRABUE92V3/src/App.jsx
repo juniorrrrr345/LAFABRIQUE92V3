@@ -52,9 +52,6 @@ const AppContent = () => {
     document.documentElement.style.setProperty('--title-font', "'Playfair Display'")
   }, [])
 
-  if (isLoading) {
-    return <LoadingPage />
-  }
 
   return (
     <Router>
