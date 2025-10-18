@@ -13,6 +13,16 @@ const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1)
   const [orderLink, setOrderLink] = useState('#')
   const [orderButtonText, setOrderButtonText] = useState('Commander')
+  const [deliveryMode, setDeliveryMode] = useState('meetup') // 'meetup' ou 'delivery'
+  
+  // Structure de prix Meet up et Livraison
+  const priceStructure = [
+    { quantity: '5g', meetup: 40, delivery: 50 },
+    { quantity: '10g', meetup: 70, delivery: 90 },
+    { quantity: '25g', meetup: 110, delivery: 140 },
+    { quantity: '50g', meetup: 220, delivery: 250 },
+    { quantity: '100g', meetup: 440, delivery: 470 }
+  ]
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -42,14 +52,7 @@ const ProductDetail = () => {
   }, [id])
 
   if (!product) {
-    return (
-      <div className="min-h-screen cosmic-bg flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-white mx-auto mb-4"></div>
-          <p className="text-white text-lg">Chargement...</p>
-        </div>
-      </div>
-    )
+    return null
   }
 
   // Construire le tableau de médias - PHOTO EN PREMIER, puis vidéo
@@ -120,7 +123,11 @@ const ProductDetail = () => {
       return
     }
     
-    const message = `Bonjour, je voudrais commander:\n\n${product.name}\n${currentVariant?.name || 'Standard'} - ${currentVariant?.price || 'N/A'}`
+    const selectedPrice = priceStructure[selectedVariant]
+    const price = deliveryMode === 'meetup' ? selectedPrice.meetup : selectedPrice.delivery
+    const modeText = deliveryMode === 'meetup' ? 'Meet up' : 'Livraison'
+    
+    const message = `Bonjour, je voudrais commander:\n\n${product.name}\n${selectedPrice.quantity} - ${price}€\nMode: ${modeText}`
     
     // Si c'est un lien WhatsApp, ajouter le message
     if (orderLink.includes('wa.me') || orderLink.includes('whatsapp')) {
@@ -264,7 +271,9 @@ const ProductDetail = () => {
                 </h1>
                 <div className="flex items-baseline flex-wrap gap-2 sm:gap-3 mb-2 sm:mb-3">
                   <span className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white">
-                    {currentVariant?.price || 'N/A'}
+                    {deliveryMode === 'meetup' 
+                      ? `${priceStructure[selectedVariant].meetup}€` 
+                      : `${priceStructure[selectedVariant].delivery}€`}
                   </span>
                 </div>
                 <div className="flex flex-wrap gap-1 sm:gap-2">
@@ -289,11 +298,24 @@ const ProductDetail = () => {
                 </p>
               </div>
 
+              {/* Mode de livraison */}
+              <div className="neon-border rounded-xl p-3 sm:p-4 lg:p-6 bg-black/90 backdrop-blur-xl border-2 border-white/30">
+                <h3 className="text-base sm:text-lg lg:text-xl font-bold text-white mb-3 sm:mb-4">🚚 Mode de livraison</h3>
+                <select
+                  value={deliveryMode}
+                  onChange={(e) => setDeliveryMode(e.target.value)}
+                  className="w-full p-3 sm:p-4 rounded-lg border-2 border-white/30 bg-slate-800/50 text-white text-sm sm:text-base lg:text-lg font-semibold focus:outline-none focus:border-white transition-all"
+                >
+                  <option value="meetup">🤝 Meet up</option>
+                  <option value="delivery">📦 Livraison</option>
+                </select>
+              </div>
+
               {/* Variantes (Quantité + Prix) */}
               <div className="neon-border rounded-xl p-3 sm:p-4 lg:p-6 bg-black/90 backdrop-blur-xl border-2 border-white/30">
                 <h3 className="text-base sm:text-lg lg:text-xl font-bold text-white mb-3 sm:mb-4">💰 Quantité & Prix</h3>
                 <div className="space-y-2 sm:space-y-3">
-                  {Array.isArray(variants) && variants.map((variant, index) => (
+                  {priceStructure.map((item, index) => (
                     <motion.button
                       key={index}
                       whileHover={{ scale: 1.02 }}
@@ -308,11 +330,15 @@ const ProductDetail = () => {
                       <div className="flex items-center space-x-1 sm:space-x-2 lg:space-x-3">
                         <span className="text-lg sm:text-xl lg:text-2xl">{selectedVariant === index ? '✓' : '○'}</span>
                         <div className="text-left">
-                          <div className="text-sm sm:text-base lg:text-lg font-bold text-white">{variant.name}</div>
-                          <div className="text-xs sm:text-sm text-gray-400 hidden sm:block">Quantité disponible</div>
+                          <div className="text-sm sm:text-base lg:text-lg font-bold text-white">{item.quantity}</div>
+                          <div className="text-xs sm:text-sm text-gray-400 hidden sm:block">
+                            {deliveryMode === 'meetup' ? 'Meet up' : 'Livraison'}
+                          </div>
                         </div>
                       </div>
-                      <div className="text-lg sm:text-xl lg:text-2xl font-bold text-white">{variant?.price || 'N/A'}</div>
+                      <div className="text-lg sm:text-xl lg:text-2xl font-bold text-white">
+                        {deliveryMode === 'meetup' ? `${item.meetup}€` : `${item.delivery}€`}
+                      </div>
                     </motion.button>
                   ))}
                 </div>
