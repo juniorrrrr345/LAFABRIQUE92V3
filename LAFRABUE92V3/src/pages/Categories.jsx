@@ -7,6 +7,7 @@ const Categories = () => {
   const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true)
   const [productCounts, setProductCounts] = useState({})
+  const [backgroundImage, setBackgroundImage] = useState('')
 
   useEffect(() => {
     const fetchData = async () => {
@@ -31,7 +32,22 @@ const Categories = () => {
         setLoading(false)
       }
     }
+    
+    const loadBackground = async () => {
+      try {
+        const { getById } = await import('../utils/api')
+        const data = await getById('settings', 'general')
+        
+        if (data && data.backgroundImage) {
+          setBackgroundImage(data.backgroundImage)
+        }
+      } catch (error) {
+        console.error('Error loading background:', error)
+      }
+    }
+    
     fetchData()
+    loadBackground()
   }, [])
 
   const gradients = [
@@ -45,7 +61,16 @@ const Categories = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen cosmic-bg flex items-center justify-center">
+      <div 
+        className="min-h-screen flex items-center justify-center"
+        style={{
+          backgroundImage: backgroundImage ? `url(${backgroundImage})` : 'linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f0f23 75%, #1a1a2e 100%)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed',
+          backgroundRepeat: 'no-repeat'
+        }}
+      >
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-white mx-auto mb-4"></div>
           <p className="text-theme text-lg">Chargement...</p>
@@ -55,7 +80,16 @@ const Categories = () => {
   }
 
   return (
-    <div className="min-h-screen cosmic-bg">
+    <div 
+      className="min-h-screen"
+      style={{
+        backgroundImage: backgroundImage ? `url(${backgroundImage})` : 'linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f0f23 75%, #1a1a2e 100%)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed',
+        backgroundRepeat: 'no-repeat'
+      }}
+    >
       <div className="pt-20 pb-32 px-4">
         <div className="max-w-7xl mx-auto">
           {/* Header */}

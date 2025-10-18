@@ -13,6 +13,7 @@ const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1)
   const [orderLink, setOrderLink] = useState('#')
   const [orderButtonText, setOrderButtonText] = useState('Commander')
+  const [backgroundImage, setBackgroundImage] = useState('')
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -38,12 +39,36 @@ const ProductDetail = () => {
         }
       }
     }
+    
+    const loadBackground = async () => {
+      try {
+        const { getById } = await import('../utils/api')
+        const data = await getById('settings', 'general')
+        
+        if (data && data.backgroundImage) {
+          setBackgroundImage(data.backgroundImage)
+        }
+      } catch (error) {
+        console.error('Error loading background:', error)
+      }
+    }
+    
     fetchProduct()
+    loadBackground()
   }, [id])
 
   if (!product) {
     return (
-      <div className="min-h-screen cosmic-bg flex items-center justify-center">
+      <div 
+        className="min-h-screen flex items-center justify-center"
+        style={{
+          backgroundImage: backgroundImage ? `url(${backgroundImage})` : 'linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f0f23 75%, #1a1a2e 100%)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed',
+          backgroundRepeat: 'no-repeat'
+        }}
+      >
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-white mx-auto mb-4"></div>
           <p className="text-white text-lg">Chargement...</p>
@@ -133,7 +158,16 @@ const ProductDetail = () => {
   }
 
   return (
-    <div className="min-h-screen cosmic-bg">
+    <div 
+      className="min-h-screen"
+      style={{
+        backgroundImage: backgroundImage ? `url(${backgroundImage})` : 'linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f0f23 75%, #1a1a2e 100%)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed',
+        backgroundRepeat: 'no-repeat'
+      }}
+    >
       <div className="pt-20 pb-24 px-4">
         <div className="max-w-7xl mx-auto">
           {/* Breadcrumb */}

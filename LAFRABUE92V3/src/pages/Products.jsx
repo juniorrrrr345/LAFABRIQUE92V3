@@ -15,10 +15,25 @@ const Products = () => {
   const [showFilters, setShowFilters] = useState(false)
   const [previewProduct, setPreviewProduct] = useState(null)
   const [isInitialLoad, setIsInitialLoad] = useState(true)
+  const [backgroundImage, setBackgroundImage] = useState('')
 
   useEffect(() => {
     fetchData()
+    loadBackground()
   }, [])
+
+  const loadBackground = async () => {
+    try {
+      const { getById } = await import('../utils/api')
+      const data = await getById('settings', 'general')
+      
+      if (data && data.backgroundImage) {
+        setBackgroundImage(data.backgroundImage)
+      }
+    } catch (error) {
+      console.error('Error loading background:', error)
+    }
+  }
 
   // Lire les paramètres d'URL au chargement
   useEffect(() => {
@@ -89,7 +104,16 @@ const Products = () => {
 
 
   return (
-    <div className="min-h-screen cosmic-bg">
+    <div 
+      className="min-h-screen"
+      style={{
+        backgroundImage: backgroundImage ? `url(${backgroundImage})` : 'linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f0f23 75%, #1a1a2e 100%)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed',
+        backgroundRepeat: 'no-repeat'
+      }}
+    >
       <div className="pt-20 pb-24 px-4">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
