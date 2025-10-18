@@ -371,10 +371,12 @@ const ProductModal = ({ product, onClose, onSuccess }) => {
     product?.variants || 
     (product ? [{
       name: 'Standard',
-      price: product.price || ''
+      price: product.price || '',
+      deliveryType: ''
     }] : [{
       name: '',
-      price: ''
+      price: '',
+      deliveryType: ''
     }])
   )
   const [categories, setCategories] = useState([])
@@ -456,7 +458,7 @@ const ProductModal = ({ product, onClose, onSuccess }) => {
   }
 
   const addVariant = () => {
-    setVariants([...variants, { name: '', price: '' }])
+    setVariants([...variants, { name: '', price: '', deliveryType: '' }])
   }
 
   const removeVariant = (index) => {
@@ -693,6 +695,51 @@ const ProductModal = ({ product, onClose, onSuccess }) => {
               </button>
             </div>
 
+            {/* Options de livraison */}
+            <div className="mb-4 p-3 bg-slate-800/30 rounded-lg">
+              <label className="block text-gray-300 mb-2 text-sm">Options de livraison disponibles :</label>
+              <div className="flex flex-wrap gap-2">
+                <label className="flex items-center space-x-2 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={variants.some(v => v.deliveryType === 'meetup')}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        // Ajouter Meet up si pas déjà présent
+                        if (!variants.some(v => v.deliveryType === 'meetup')) {
+                          setVariants([...variants, { name: '5g', price: '40€', deliveryType: 'meetup' }])
+                        }
+                      } else {
+                        // Supprimer tous les Meet up
+                        setVariants(variants.filter(v => v.deliveryType !== 'meetup'))
+                      }
+                    }}
+                    className="rounded"
+                  />
+                  <span className="text-green-400">Meet up</span>
+                </label>
+                <label className="flex items-center space-x-2 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={variants.some(v => v.deliveryType === 'livraison')}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        // Ajouter Livraison si pas déjà présent
+                        if (!variants.some(v => v.deliveryType === 'livraison')) {
+                          setVariants([...variants, { name: '5g', price: '50€', deliveryType: 'livraison' }])
+                        }
+                      } else {
+                        // Supprimer tous les Livraison
+                        setVariants(variants.filter(v => v.deliveryType !== 'livraison'))
+                      }
+                    }}
+                    className="rounded"
+                  />
+                  <span className="text-blue-400">Livraison</span>
+                </label>
+              </div>
+            </div>
+
             {/* Conteneur scrollable pour les variantes sur mobile */}
             <div className="space-y-3 max-h-60 sm:max-h-none overflow-y-auto overflow-x-hidden mobile-scroll-container relative">
               {/* Indicateur de scroll sur mobile */}
@@ -716,6 +763,15 @@ const ProductModal = ({ product, onClose, onSuccess }) => {
                       className="w-full sm:flex-1 px-3 py-2 bg-slate-800 border border-gray-700/30 rounded text-white focus:outline-none focus:border-white min-w-0"
                       required
                     />
+                    <select
+                      value={variant.deliveryType || ''}
+                      onChange={(e) => updateVariant(index, 'deliveryType', e.target.value)}
+                      className="w-full sm:flex-1 px-3 py-2 bg-slate-800 border border-gray-700/30 rounded text-white focus:outline-none focus:border-white min-w-0"
+                    >
+                      <option value="">Type de livraison</option>
+                      <option value="meetup">Meet up</option>
+                      <option value="livraison">Livraison</option>
+                    </select>
                   </div>
                   {variants.length > 1 && (
                     <button
