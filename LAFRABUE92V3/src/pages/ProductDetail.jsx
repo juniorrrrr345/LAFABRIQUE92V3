@@ -286,7 +286,10 @@ const ProductDetail = () => {
 
               {/* Sélecteur de prix */}
               <div className="neon-border rounded-xl p-3 sm:p-4 lg:p-6 bg-black/90 backdrop-blur-xl border-2 border-white/30">
-                <PricingSelector onSelectionChange={handlePricingSelection} />
+                <PricingSelector 
+                  onSelectionChange={handlePricingSelection} 
+                  productVariants={product.variants || []}
+                />
               </div>
 
               {/* Commande */}

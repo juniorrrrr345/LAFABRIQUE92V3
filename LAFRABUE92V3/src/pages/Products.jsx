@@ -253,7 +253,17 @@ const ProductCard = ({ product, index, onPreview, categories, farms }) => {
   // Afficher le premier média disponible (photo en priorité)
   const displayImage = allMedias[0] || product.photo || product.image || product.video
   // Prix par défaut pour l'affichage des cartes
-  const basePrice = '5g 40€'
+  const getDisplayPrice = (product) => {
+    if (product.variants && product.variants.length > 0) {
+      const firstVariant = product.variants[0]
+      if (firstVariant.meetupPrice && firstVariant.livraisonPrice) {
+        return `${firstVariant.meetupPrice}€ / ${firstVariant.livraisonPrice}€`
+      }
+    }
+    return '5g 40€ / 50€'
+  }
+  
+  const basePrice = getDisplayPrice(product)
   
   // Fonction pour détecter si c'est une vidéo
   const isVideo = (url) => {
@@ -344,7 +354,7 @@ const ProductCard = ({ product, index, onPreview, categories, farms }) => {
         
         {/* Prix affiché directement */}
         <div className="mb-3">
-          <div className="text-lg font-bold text-white mb-1">5g 40€ / 50€</div>
+          <div className="text-lg font-bold text-white mb-1">{basePrice}</div>
           <div className="text-sm text-gray-300">Meet up / Livraison</div>
         </div>
         
@@ -361,18 +371,45 @@ const ProductCard = ({ product, index, onPreview, categories, farms }) => {
 }
 
 const ProductPreview = ({ product, onClose, categories, farms }) => {
-  const [selectedQuantity, setSelectedQuantity] = useState('5g')
+  const [selectedQuantity, setSelectedQuantity] = useState('')
   const [selectedDelivery, setSelectedDelivery] = useState('meetup')
   
-  const pricing = {
-    '5g': { meetup: 40, livraison: 50 },
-    '10g': { meetup: 70, livraison: 90 },
-    '25g': { meetup: 110, livraison: 140 },
-    '50g': { meetup: 220, livraison: 250 },
-    '100g': { meetup: 440, livraison: 470 }
-  }
+  // Construire le pricing à partir des variants du produit
+  const pricing = {}
+  const quantities = []
   
-  const quantities = ['5g', '10g', '25g', '50g', '100g']
+  if (product.variants && product.variants.length > 0) {
+    product.variants.forEach(variant => {
+      if (variant.name && variant.meetupPrice && variant.livraisonPrice) {
+        pricing[variant.name] = {
+          meetup: parseInt(variant.meetupPrice) || 0,
+          livraison: parseInt(variant.livraisonPrice) || 0
+        }
+        quantities.push(variant.name)
+      }
+    })
+  }
+
+  // Fallback si pas de variants
+  if (quantities.length === 0) {
+    const defaultPricing = {
+      '5g': { meetup: 40, livraison: 50 },
+      '10g': { meetup: 70, livraison: 90 },
+      '25g': { meetup: 110, livraison: 140 },
+      '50g': { meetup: 220, livraison: 250 },
+      '100g': { meetup: 440, livraison: 470 }
+    }
+    Object.assign(pricing, defaultPricing)
+    quantities.push(...Object.keys(defaultPricing))
+  }
+
+  // Initialiser la première quantité sélectionnée
+  React.useEffect(() => {
+    if (quantities.length > 0 && !selectedQuantity) {
+      setSelectedQuantity(quantities[0])
+    }
+  }, [quantities, selectedQuantity])
+  
   const deliveryOptions = [
     { value: 'meetup', label: 'Meet up', icon: '🤝' },
     { value: 'livraison', label: 'Livraison', icon: '🚚' }
