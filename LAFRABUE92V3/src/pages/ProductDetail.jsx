@@ -292,29 +292,45 @@ const ProductDetail = () => {
               {/* Variantes (Quantité + Prix) */}
               <div className="neon-border rounded-xl p-3 sm:p-4 lg:p-6 bg-black/90 backdrop-blur-xl border-2 border-white/30">
                 <h3 className="text-base sm:text-lg lg:text-xl font-bold text-white mb-3 sm:mb-4">💰 Quantité & Prix</h3>
-                <div className="space-y-2 sm:space-y-3">
-                  {Array.isArray(variants) && variants.map((variant, index) => (
-                    <motion.button
-                      key={index}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => setSelectedVariant(index)}
-                      className={`w-full p-2 sm:p-3 lg:p-4 rounded-lg border-2 transition-all flex items-center justify-between ${
-                        selectedVariant === index
-                          ? 'border-white bg-white/10 text-white'
-                          : 'border-gray-700/30 bg-slate-800/50 text-gray-300 hover:border-white/50'
-                      }`}
-                    >
-                      <div className="flex items-center space-x-1 sm:space-x-2 lg:space-x-3">
-                        <span className="text-lg sm:text-xl lg:text-2xl">{selectedVariant === index ? '✓' : '○'}</span>
-                        <div className="text-left">
-                          <div className="text-sm sm:text-base lg:text-lg font-bold text-white">{variant.name}</div>
-                          <div className="text-xs sm:text-sm text-gray-400 hidden sm:block">Quantité disponible</div>
+                
+                {/* Format Meet up / Livraison */}
+                <div className="space-y-4">
+                  {/* En-têtes */}
+                  <div className="grid grid-cols-2 gap-4 text-center">
+                    <div className="bg-gradient-to-r from-green-500/20 to-green-600/20 border border-green-500/30 rounded-lg p-2">
+                      <h4 className="text-sm sm:text-base font-bold text-green-400">Meet up</h4>
+                    </div>
+                    <div className="bg-gradient-to-r from-blue-500/20 to-blue-600/20 border border-blue-500/30 rounded-lg p-2">
+                      <h4 className="text-sm sm:text-base font-bold text-blue-400">Livraison</h4>
+                    </div>
+                  </div>
+                  
+                  {/* Prix par quantité */}
+                  <div className="space-y-2">
+                    {[
+                      { qty: '5g', meetup: '40€', livraison: '50€' },
+                      { qty: '10g', meetup: '70€', livraison: '90€' },
+                      { qty: '25g', meetup: '110€', livraison: '140€' },
+                      { qty: '50g', meetup: '220€', livraison: '250€' },
+                      { qty: '100g', meetup: '440€', livraison: '470€' }
+                    ].map((item, index) => (
+                      <motion.div
+                        key={index}
+                        whileHover={{ scale: 1.02 }}
+                        className="grid grid-cols-3 gap-2 p-2 sm:p-3 rounded-lg border border-gray-700/30 bg-slate-800/30 hover:bg-slate-700/30 transition-all"
+                      >
+                        <div className="text-center">
+                          <div className="text-sm sm:text-base font-bold text-white">{item.qty}</div>
                         </div>
-                      </div>
-                      <div className="text-lg sm:text-xl lg:text-2xl font-bold text-white">{variant?.price || 'N/A'}</div>
-                    </motion.button>
-                  ))}
+                        <div className="text-center">
+                          <div className="text-sm sm:text-base font-bold text-green-400">{item.meetup}</div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-sm sm:text-base font-bold text-blue-400">{item.livraison}</div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
                 </div>
               </div>
 

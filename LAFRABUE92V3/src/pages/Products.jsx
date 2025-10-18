@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import Footer from '../components/Footer'
-import ProductLoading from '../components/ProductLoading'
+import LoadingPage from '../components/LoadingPage'
 
 const Products = () => {
   const [searchParams] = useSearchParams()
@@ -108,7 +108,7 @@ const Products = () => {
   }
 
   if (loading) {
-    return <ProductLoading message={loadingMessage} progress={loadingProgress} />
+    return <LoadingPage />
   }
 
   return (
