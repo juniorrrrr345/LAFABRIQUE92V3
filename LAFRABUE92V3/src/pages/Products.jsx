@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import Footer from '../components/Footer'
-import ProductLoading from '../components/ProductLoading'
 
 const Products = () => {
   const [searchParams] = useSearchParams()
@@ -16,8 +15,6 @@ const Products = () => {
   const [selectedFarm, setSelectedFarm] = useState('')
   const [showFilters, setShowFilters] = useState(false)
   const [previewProduct, setPreviewProduct] = useState(null)
-  const [loadingMessage, setLoadingMessage] = useState('Chargement des produits...')
-  const [loadingProgress, setLoadingProgress] = useState(0)
 
   useEffect(() => {
     fetchData()
@@ -42,33 +39,16 @@ const Products = () => {
 
   const fetchData = async () => {
     try {
-      setLoadingMessage('Récupération des données...')
-      setLoadingProgress(20)
-      
       const { getAll } = await import('../utils/api')
       
-      setLoadingMessage('Chargement des produits...')
-      setLoadingProgress(40)
       const productsData = await getAll('products')
-      
-      setLoadingMessage('Chargement des catégories...')
-      setLoadingProgress(60)
       const categoriesData = await getAll('categories')
-      
-      setLoadingMessage('Chargement des fermes...')
-      setLoadingProgress(80)
       const farmsData = await getAll('farms')
       
-      setLoadingMessage('Finalisation...')
-      setLoadingProgress(90)
       setAllProducts(productsData)
       setProducts(productsData)
       setCategories(categoriesData)
       setFarms(farmsData)
-      
-      setLoadingMessage('Terminé!')
-      setLoadingProgress(100)
-      await new Promise(resolve => setTimeout(resolve, 500))
     } catch (error) {
       console.error('Erreur lors du chargement des produits:', error)
       setProducts([])
@@ -108,7 +88,13 @@ const Products = () => {
   }
 
   if (loading) {
-    return <ProductLoading message={loadingMessage} progress={loadingProgress} />
+    return (
+      <div className="min-h-screen cosmic-bg flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-white mx-auto mb-4"></div>
+        </div>
+      </div>
+    )
   }
 
   return (
